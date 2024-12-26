@@ -63,11 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        .container p {
-            color: red;
-            font-weight: bold;
-            font-size: 14px;
-        }
         h2 {
             text-align: center;
             color: #003399;
@@ -111,15 +106,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             margin-bottom: 15px;
         }
     </style>
+    <script>
+        function validatePasswords() {
+            const password = document.getElementById('manager_passwd').value;
+            const confirmPassword = document.getElementById('confirm_passwd').value;
+            const errorMessage = document.getElementById('password-match-message');
+
+            if (password !== confirmPassword) {
+                errorMessage.style.display = 'block';
+                return false; // 폼 제출 중지
+            } else {
+                errorMessage.style.display = 'none';
+                return true;
+            }
+        }
+    </script>    
 </head>
 <body>
     <div class="container">
-        <h2>고객사 등록 요청</h2>
-        <p>● 등록 요청은 구매 담당자의 승인 뒤, 등록된 계정으로 비밀번호를 발송합니다.<br>● 고객사ID를 모르실 경우, 구매 담당자 또는 영업 담당자에게 문의 바랍니다.<br>● 부서가 목록에 없는 경우, 신규부서등록 항목 선택 후 부서명을 직접 입력 바랍니다.</p>
+        <h2>고객사 회원가입</h2>
         <?php if (!empty($success_message)): ?>
             <p class="success-message"><?php echo $success_message; ?></p>
         <?php endif; ?>
         <form method="POST" action="">
+            <div class="form-group">
+                <label for="manager_id">아이디</label>
+                <input type="text" id="manager_id" name="manager_id" required>
+            </div>
+            <div class="form-group">
+                <label for="manager_passwd">비밀번호</label>
+                <input type="text" id="manager_passwd" name="manager_passwd" required>
+            </div>
+            <div class="form-group">
+                <label for="confirm_passwd">비밀번호 확인</label>
+                <input type="password" id="confirm_passwd" name="confirm_passwd" required>
+                <small id="password-match-message" style="color: red; display: none;">비밀번호가 일치하지 않습니다.</small>
+            </div>
             <div class="form-group">
                 <label for="customer_company">고객사</label>
                 <select id="customer_company" name="customer_company" required>
@@ -150,10 +172,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </select>
             </div>
             <div class="form-group">
-                <label for="manager_id">담당자ID</label>
-                <input type="text" id="manager_id" name="manager_id" required>
-            </div>
-            <div class="form-group">
                 <label for="department">부서</label>
                 <select id="department" name="department" required>
                     <option value="">부서를 선택하세요.</option>
@@ -177,16 +195,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="text" id="full_name" name="full_name" required>
             </div>
             <div class="form-group">
-                <label for="employee_id">사번</label>
-                <input type="number" id="employee_id" name="employee_id" required>
-            </div>
-            <div class="form-group">
-                <label for="email">이메일</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="phone_number">회사 전화번호</label>
+                <label for="phone_number">연락처(휴대폰)</label>
                 <input type="tel" id="phone_number" name="phone_number" required>
+            </div>
+            <div class="form-group">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email" required>
             </div>
             <button type="submit">등록</button>
         </form>

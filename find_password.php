@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $manager_name = $_POST['manager_name'];
 
     // 아이디와 담당자 이름으로 사용자 정보 찾기
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :username AND manager_name = :manager_name");
+    $stmt = $pdo->prepare("SELECT * FROM MEMBERS WHERE MEM_ID = :username AND manager_name = :manager_name");
     $stmt->execute(['username' => $username, 'manager_name' => $manager_name]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -80,17 +80,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         .form-group {
             margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            text-align: left;
         }
         label {
-            display: inline-block;
+            display: block;
+            margin-bottom: 5px;
             font-weight: bold;
-            width: 120px;
         }
-        input {
-            width: calc(60% - 20px);
+        input, select {
+            width: calc(100% - 20px);
             padding: 8px;
             margin-bottom: 10px;
             border: 1px solid #ddd;
@@ -119,6 +117,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             text-align: center;
             margin-bottom: 15px;
         }
+        .small-hint {
+            font-size: 12px;
+            color: gray;
+        }
         footer {
             background-color: #003399;
             color: white;
@@ -137,27 +139,62 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </h1>
     </header>
     <div class="container">
-        <h2>등록 정보로 찾기</h2>
-        <p>담당자로 등록되어 있는 이메일 주소로 임시 패스워드가 전송됩니다.<br>아이디와 담당자 이름을 입력하세요.</p>
+        <h2>Search PW 비밀번호 찾기</h2>
+        <p>아래 정보를 입력하시면 본인 확인을 거쳐 비밀번호를 찾아 드립니다.<br><br>옵션을 선택하고 정보를 입력해주세요.</p>
         <?php if (!empty($error)): ?>
             <p class="error-message"><?php echo $error; ?></p>
-        <?php elseif (!empty($success_message)): ?>
-            <p class="success-message"><?php echo $success_message; ?></p>
+        <?php elseif (!empty($found_username)): ?>
+            <p class="success-message">등록된 정보에 해당하는 비밀번호는 <strong><?php echo $found_username; ?></strong> 입니다.</p>
         <?php endif; ?>
         <form method="POST" action="">
             <div class="form-group">
+                <select id="search_option" name="search_option" onchange="toggleFields()" required>
+                    <option value="">옵션을 선택하세요</option>
+                    <option value="phone">휴대폰 번호로 찾기</option>
+                    <option value="email">E-mail로 찾기</option>
+                </select>
+            </div>
+            <div class="form-group" id="username-group" style="display: none;">
                 <label for="username">아이디</label>
                 <input type="text" id="username" name="username" required>
             </div>
-            <div class="form-group">
-                <label for="manager_name">담당자</label>
-                <input type="text" id="manager_name" name="manager_name" required>
+            <div class="form-group" id="phone-group" style="display: none;">
+                <label for="phone_number">휴대폰</label>
+                <input type="text" id="phone_number" name="phone_number">
+                <p class="small-hint">예) 01012345678로 '-' 제외하고 입력</p>
             </div>
-            <button type="submit">조회</button>
+            <div class="form-group" id="email-group" style="display: none;">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email">
+                <p class="small-hint">예) ***@hyundai.com 등의 형식으로 전체 입력</p>
+            </div>
+            <button type="submit">비밀번호 찾기</button>
         </form>
-    </div>
+    </div>    
     <footer>
         <p>COPYRIGHT 2019 HYUNDAI AUTOEVER CORP. ALL RIGHTS RESERVED.</p>
     </footer>
+
+    <script>
+    function toggleFields() {
+        const searchOption = document.getElementById('search_option').value;
+        const groups = document.querySelectorAll('#name-group, #phone-group, #email-group');
+
+        // 모든 그룹을 숨김
+        groups.forEach(group => {
+            group.style.display = 'none';
+        });
+
+        // 선택된 옵션에 따라 관련 그룹만 표시
+        if (searchOption === 'phone') {
+            document.getElementById('phone-group').style.display = 'block';
+            document.getElementById('username-group').style.display = 'block';
+        } else if (searchOption === 'email') {
+            document.getElementById('email-group').style.display = 'block';
+            document.getElementById('username-group').style.display = 'block';
+        }
+    }
+</script>
+
 </body>
 </html>
