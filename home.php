@@ -1,6 +1,4 @@
 <?php
-// main_complete.php
-
 // 로그인 상태 확인 (예: 세션 사용)
 session_start();
 if (!isset($_SESSION['user_id'])) {
