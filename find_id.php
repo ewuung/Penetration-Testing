@@ -3,20 +3,16 @@ session_start();
 require 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $business_number = $_POST['business_number'];
 
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :username");
-    $stmt->execute(['username' => $username]);
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE business_number = :business_number");
+    $stmt->execute(['business_number' => $business_number]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($user && md5($password) === $user['password']) { // MD5는 예제용. 실제론 password_verify 사용 권장.
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
-        header("Location: home.php");
-        exit;
+    if ($user) {
+        $found_username = $user['username'];
     } else {
-        $error = "Invalid username or password!";
+        $error = "등록된 사업자 등록번호가 없습니다!";
     }
 }
 ?>
@@ -25,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>현대오토에버 VaatzIT 로그인</title>
+    <title>현대오토에버 VaatzIT 아이디 찾기</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -63,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border: 1px solid #ddd;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
         h2 {
             text-align: center;
@@ -70,14 +67,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         .form-group {
             margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
+            margin-right: 20px;
         }
         input {
-            width: calc(100% - 20px);
+            width: calc(50% - 20px);
             padding: 8px;
             margin-bottom: 10px;
             border: 1px solid #ddd;
@@ -101,6 +102,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             text-align: center;
             margin-bottom: 15px;
         }
+        .success-message {
+            color: green;
+            text-align: center;
+            margin-bottom: 15px;
+        }
         footer {
             background-color: #003399;
             color: white;
@@ -119,20 +125,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </h1>
     </header>
     <div class="container">
-        <h2>로그인</h2>
+        <h2>ID 찾기</h2>
+        <p>가입 시 등록한 사업자등록번호로 ID를 찾습니다.<br>사업자 등록번호를 입력하세요.</p>
         <?php if (!empty($error)): ?>
             <p class="error-message"><?php echo $error; ?></p>
+        <?php elseif (!empty($found_username)): ?>
+            <p class="success-message">등록된 사업자 등록번호에 해당하는 아이디는 <strong><?php echo $found_username; ?></strong> 입니다.</p>
         <?php endif; ?>
         <form method="POST" action="">
             <div class="form-group">
-                <label for="username">아이디</label>
-                <input type="text" id="username" name="username" required>
+                <label for="business_number">사업자 등록번호</label>
+                <input type="text" id="business_number" name="business_number" required>
             </div>
-            <div class="form-group">
-                <label for="password">비밀번호</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit">로그인</button>
+            <button type="submit">확인</button>
         </form>
     </div>
     <footer>

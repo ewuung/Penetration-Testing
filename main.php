@@ -146,7 +146,7 @@
             </div>
             <div class="card">
                 <h2>고객담당자 등록</h2>
-                <a href="#">등록하기</a>
+                <a href="registCustomerUser.php">등록하기</a>
             </div>
             <div class="card">
                 <h2>사이버 감사실</h2>
