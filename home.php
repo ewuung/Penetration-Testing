@@ -1,15 +1,15 @@
 <?php
 // 로그인 상태 확인 (예: 세션 사용)
 session_start();
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['MEM_ID'])) {
     // 로그인하지 않은 경우 로그인 페이지로 리다이렉트
     header("Location: login.php");
     exit();
 }
 
 // 사용자 정보 (세션에서 가져오기)
-$user['id'] = $_SESSION['user_id'];
-$user['username'] = $_SESSION['username']; // 로그인 시 저장된 사용자 이름
+$user['id'] = $_SESSION['MEM_ID'];
+$user['username'] = $_SESSION['MEM_NAME']; // 로그인 시 저장된 사용자 이름
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -148,7 +148,7 @@ $user['username'] = $_SESSION['username']; // 로그인 시 저장된 사용자 
             </div>
             <div class="card">
                 <h2>고객담당자 등록</h2>
-                <a href="#">등록하기</a>
+                <a href="#">정보수정</a>
             </div>
             <div class="card">
                 <h2>사이버 감사실</h2>
