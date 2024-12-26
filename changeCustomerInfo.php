@@ -4,11 +4,11 @@ require 'db.php';
 
 try {
     // 사용자 세션 정보 확인
-    if (!isset($_SESSION['user_id'])) {
+    if (!isset($_SESSION['MEM_ID'])) {
         die("로그인이 필요합니다.");
     }
 
-    $user_id = $_SESSION['user_id'];
+    $user_id = $_SESSION['MEM_ID'];
 
     // 사용자 정보 가져오기
     $query = "SELECT * FROM MEMBER WHERE MEM_ID = :user_id";
@@ -149,8 +149,8 @@ try {
                 <input type="text" id="company_code" name="company_code" value="<?= htmlspecialchars($user['COM_CODE']) ?>" readonly>
             </div>
             <div class="form-group">
-                <label for="department">부서</label>
-                <input type="text" id="department" name="department" value="<?= htmlspecialchars($user['TEAM']) ?>">
+                <label for="team">부서</label>
+                <input type="text" id="team" name="team" value="<?= htmlspecialchars($user['MEM_TEAM']) ?>">
             </div>
             <div class="form-group">
                 <label for="name">성명</label>

@@ -4,22 +4,22 @@ require 'db.php'; // PDO 연결 포함
 
 try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $user_id = $_SESSION['user_id'];
+        $user_id = $_SESSION['MEM_ID'];
 
         // 입력 데이터 가져오기
         $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
-        $company_name = $_POST['company_name'];
-        $department = $_POST['department'];
-        $name = $_POST['name'];
-        $phone = $_POST['phone'];
-        $email = $_POST['email'];
+        $company_name = $_POST['COM_NAME'];
+        $team = $_POST['MEM_TEAM'];
+        $name = $_POST['MEM_NAME'];
+        $phone = $_POST['MEM_PHONNUM'];
+        $email = $_POST['MEM_EMAIL'];
 
         // SQL 쿼리 준비
         $query = "
             UPDATE MEMBERS 
             SET MEM_PW = :password, 
                 COM_NAME = :company_name, 
-                TEAM = :department, 
+                MEM_TEAM = :team, 
                 MEM_NAME = :name, 
                 MEM_PHONNUM = :phone, 
                 MEM_EMAIL = :email 
@@ -30,7 +30,7 @@ try {
         // 파라미터 바인딩 및 실행
         $stmt->bindParam(':password', $password, PDO::PARAM_STR);
         $stmt->bindParam(':company_name', $company_name, PDO::PARAM_STR);
-        $stmt->bindParam(':department', $department, PDO::PARAM_STR);
+        $stmt->bindParam(':team', $team, PDO::PARAM_STR);
         $stmt->bindParam(':name', $name, PDO::PARAM_STR);
         $stmt->bindParam(':phone', $phone, PDO::PARAM_STR);
         $stmt->bindParam(':email', $email, PDO::PARAM_STR);

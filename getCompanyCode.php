@@ -4,7 +4,7 @@ require 'db.php'; // PDO 연결 포함
 
 try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $company_name = $_POST['company_name'];
+        $company_name = $_POST['COM_NAME'];
 
         // SQL 쿼리 준비
         $query = "SELECT COM_CODE FROM COMPANY WHERE COM_NAME = :company_name";
