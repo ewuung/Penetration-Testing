@@ -10,8 +10,8 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // 사용자 정보 (세션에서 가져오기)
-$user_id = $_SESSION['user_id'];
-$user_name = $_SESSION['user_name']; // 로그인 시 저장된 사용자 이름
+$user['id'] = $_SESSION['user_id'];
+$user['username'] = $_SESSION['username']; // 로그인 시 저장된 사용자 이름
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -136,7 +136,7 @@ $user_name = $_SESSION['user_name']; // 로그인 시 저장된 사용자 이름
     <div class="container">
         <!-- 사용자 환영 섹션 -->
         <div class="welcome-section">
-            <h2>환영합니다, <?php echo htmlspecialchars($user_name); ?>님!</h2>
+            <h2>환영합니다, <?php echo htmlspecialchars($user['username']); ?>님!</h2>
             <p>현대오토에버 플랫폼에 로그인하셨습니다.</p>
             <form action="logout.php" method="post">
                 <button class="logout-button">로그아웃</button>
