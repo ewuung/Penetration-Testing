@@ -3,20 +3,20 @@ session_start();
 require 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = $_POST['username'];
+    $id = $_POST['id'];
     $password = $_POST['password'];
 
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :username");
-    $stmt->execute(['username' => $username]);
+    $stmt = $pdo->prepare("SELECT * FROM MEMBERS WHERE MEM_ID = :id");
+    $stmt->execute(['id' => $id]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($user && md5($password) === $user['password']) { // MD5는 예제용. 실제론 password_verify 사용 권장.
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
+    if ($user && md5($password) === $user['MEM_PW']) { // MD5는 예제용. 실제론 password_verify 사용 권장.
+        $_SESSION['user_id'] = $user['MEM_ID'];
+        $_SESSION['username'] = $user['MEM_NAME'];
         header("Location: home.php");
         exit;
     } else {
-        $error = "Invalid username or password!";
+        $error = "Invalid ID or Password!";
     }
 }
 ?>
@@ -125,8 +125,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php endif; ?>
         <form method="POST" action="">
             <div class="form-group">
-                <label for="username">아이디</label>
-                <input type="text" id="username" name="username" required>
+                <label for="id">아이디</label>
+                <input type="text" id="id" name="id" required>
             </div>
             <div class="form-group">
                 <label for="password">비밀번호</label>

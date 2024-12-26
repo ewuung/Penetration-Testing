@@ -3,16 +3,26 @@ session_start();
 require 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $business_number = $_POST['business_number'];
+    $search_option = $_POST['search_option'];
 
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE business_number = :business_number");
-    $stmt->execute(['business_number' => $business_number]);
+    if ($search_option === 'phone') {
+        $phone_number = $_POST['phone_number'];
+
+        $stmt = $pdo->prepare("SELECT * FROM MEMBERS WHERE MEM_PHONENUM = :phone_number");
+        $stmt->execute(['phone_number' => $phone_number]);
+    } elseif ($search_option === 'email') {
+        $email = $_POST['email'];
+
+        $stmt = $pdo->prepare("SELECT * FROM MEMBERS WHERE MEM_EMAIL = :email");
+        $stmt->execute(['email' => $email]);
+    }
+
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user) {
         $found_username = $user['username'];
     } else {
-        $error = "등록된 사업자 등록번호가 없습니다!";
+        $error = "입력하신 정보와 일치하는 아이디가 없습니다!";
     }
 }
 ?>
@@ -31,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         header {
             background-color: white;
-            color:  #003399;
+            color: #003399;
             padding-left: 11%;
             text-align: left;
             border-bottom: 4px solid #003399;
@@ -67,18 +77,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         .form-group {
             margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            text-align: left;
         }
         label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
-            margin-right: 20px;
         }
-        input {
-            width: calc(50% - 20px);
+        input, select {
+            width: calc(100% - 20px);
             padding: 8px;
             margin-bottom: 10px;
             border: 1px solid #ddd;
@@ -107,6 +114,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             text-align: center;
             margin-bottom: 15px;
         }
+        .small-hint {
+            font-size: 12px;
+            color: gray;
+        }
         footer {
             background-color: #003399;
             color: white;
@@ -125,23 +136,62 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </h1>
     </header>
     <div class="container">
-        <h2>ID 찾기</h2>
-        <p>가입 시 등록한 사업자등록번호로 ID를 찾습니다.<br>사업자 등록번호를 입력하세요.</p>
+        <h2>Search ID 아이디 찾기</h2>
+        <p>아래 정보를 입력하시면 본인 확인을 거쳐 아이디를 찾아 드립니다.<br><br>옵션을 선택하고 정보를 입력해주세요.</p>
         <?php if (!empty($error)): ?>
             <p class="error-message"><?php echo $error; ?></p>
         <?php elseif (!empty($found_username)): ?>
-            <p class="success-message">등록된 사업자 등록번호에 해당하는 아이디는 <strong><?php echo $found_username; ?></strong> 입니다.</p>
+            <p class="success-message">등록된 정보에 해당하는 아이디는 <strong><?php echo $found_username; ?></strong> 입니다.</p>
         <?php endif; ?>
         <form method="POST" action="">
             <div class="form-group">
-                <label for="business_number">사업자 등록번호</label>
-                <input type="text" id="business_number" name="business_number" required>
+                <select id="search_option" name="search_option" onchange="toggleFields()" required>
+                    <option value="">옵션을 선택하세요</option>
+                    <option value="phone">휴대폰 번호로 찾기</option>
+                    <option value="email">E-mail로 찾기</option>
+                </select>
             </div>
-            <button type="submit">확인</button>
+            <div class="form-group" id="name-group" style="display: none;">
+                <label for="full_name">성명</label>
+                <input type="text" id="full_name" name="full_name" required>
+            </div>
+            <div class="form-group" id="phone-group" style="display: none;">
+                <label for="phone_number">휴대폰</label>
+                <input type="text" id="phone_number" name="phone_number">
+                <p class="small-hint">예) 01012345678로 '-' 제외하고 입력</p>
+            </div>
+            <div class="form-group" id="email-group" style="display: none;">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email">
+                <p class="small-hint">예) ***@hyundai.com 등의 형식으로 전체 입력</p>
+            </div>
+            <button type="submit">아이디 찾기</button>
         </form>
     </div>
     <footer>
         <p>COPYRIGHT 2019 HYUNDAI AUTOEVER CORP. ALL RIGHTS RESERVED.</p>
     </footer>
+
+    <script>
+    function toggleFields() {
+        const searchOption = document.getElementById('search_option').value;
+        const groups = document.querySelectorAll('#name-group, #phone-group, #email-group');
+
+        // 모든 그룹을 숨김
+        groups.forEach(group => {
+            group.style.display = 'none';
+        });
+
+        // 선택된 옵션에 따라 관련 그룹만 표시
+        if (searchOption === 'phone') {
+            document.getElementById('phone-group').style.display = 'block';
+            document.getElementById('name-group').style.display = 'block';
+        } else if (searchOption === 'email') {
+            document.getElementById('email-group').style.display = 'block';
+            document.getElementById('name-group').style.display = 'block';
+        }
+    }
+</script>
+
 </body>
 </html>
