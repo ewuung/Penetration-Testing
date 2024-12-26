@@ -148,7 +148,7 @@ $user['MEM_NAME'] = $_SESSION['username']; // 로그인 시 저장된 사용자 
             </div>
             <div class="card">
                 <h2>고객담당자 등록</h2>
-                <a href="#">등록하기</a>
+                <a href="changeCustomerInfo.php">정보수정</a>
             </div>
             <div class="card">
                 <h2>사이버 감사실</h2>
