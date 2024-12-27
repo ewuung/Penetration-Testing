@@ -1,16 +1,15 @@
 <?php
 session_start();
-require_once 'db_connect.php';
+require_once 'db.php';
 
 // Fetch user data if ID is provided
 if (isset($_GET['id'])) {
     $id = intval($_GET['id']);
-    $query = "SELECT * FROM members WHERE id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $id);
+    $query = "SELECT * FROM MEMBERS WHERE id = ?";
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(1, $id, PDO::PARAM_STR);
     $stmt->execute();
-    $result = $stmt->get_result();
-    $user = $result->fetch_assoc();
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$user) {
         echo "<script>
@@ -105,8 +104,8 @@ if (isset($_GET['id'])) {
             <input type="hidden" name="update" value="1">
             
             <div class="form-group">
-                <label>사용자 ID</label>
-                <input type="text" name="mem_id" value="<?php echo htmlspecialchars($user['mem_id']); ?>" required>
+                <label>아이디디</label>
+                <input type="text" name="mem_id" value="<?php echo htmlspecialchars($user['MEM_ID']); ?>" required>
             </div>
             
             <div class="form-group">
@@ -115,28 +114,28 @@ if (isset($_GET['id'])) {
             </div>
             
             <div class="form-group">
-                <label>회사 ID</label>
-                <input type="text" name="com_id" value="<?php echo htmlspecialchars($user['com_id']); ?>" required>
+                <label>고객사 ID</label>
+                <input type="text" name="com_id" value="<?php echo htmlspecialchars($user['COM_ID']); ?>" required>
             </div>
             
             <div class="form-group">
-                <label>팀</label>
-                <input type="text" name="team" value="<?php echo htmlspecialchars($user['team']); ?>" required>
+                <label>부서</label>
+                <input type="text" name="mem_team" value="<?php echo htmlspecialchars($user['MEM_TEAM']); ?>" required>
             </div>
             
             <div class="form-group">
-                <label>이름</label>
-                <input type="text" name="mem_name" value="<?php echo htmlspecialchars($user['mem_name']); ?>" required>
+                <label>성명</label>
+                <input type="text" name="mem_name" value="<?php echo htmlspecialchars($user['MEM_NAME']); ?>" required>
             </div>
             
             <div class="form-group">
-                <label>전화번호</label>
-                <input type="tel" name="mem_phonnum" value="<?php echo htmlspecialchars($user['mem_phonnum']); ?>" required>
+                <label>연락처(휴대폰)</label>
+                <input type="tel" name="mem_phonenum" value="<?php echo htmlspecialchars($user['MEM_PHONENUM']); ?>" required>
             </div>
             
             <div class="form-group">
-                <label>이메일</label>
-                <input type="email" name="mem_email" value="<?php echo htmlspecialchars($user['mem_email']); ?>" required>
+                <label>E-mail</label>
+                <input type="email" name="mem_email" value="<?php echo htmlspecialchars($user['MEM_EMAIL']); ?>" required>
             </div>
             
             <div class="btn-container">

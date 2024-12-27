@@ -2,33 +2,65 @@
 session_start();
 require 'db.php';
 
+$success_message = ''; // 초기화
+$error_message = ''; // 오류 메시지 초기화
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // 사용자가 제출한 폼 데이터 처리
-    $customer_company = $_POST['customer_company'];
-    $manager_id = $_POST['manager_id'];
-    $department = $_POST['department'];
-    $full_name = $_POST['full_name'];
-    $employee_id = $_POST['employee_id'];
-    $email = $_POST['email'];
-    $phone_number = $_POST['phone_number'];
+    $customer_company = $_POST['customer_company'] ?? null;
+    $user_id = $_POST['user_id'] ?? null;
+    $user_passwd = $_POST['user_passwd'] ?? null;
+    $confirm_passwd = $_POST['confirm_passwd'] ?? null;
+    $department = $_POST['department'] ?? null;
+    $full_name = $_POST['full_name'] ?? null;
+    $email = $_POST['email'] ?? null;
+    $phone_number = $_POST['phone_number'] ?? null;
 
-    // 데이터베이스에 입력
-    $stmt = $pdo->prepare("INSERT INTO customer_managers (customer_company, manager_id, department, full_name, employee_id, email, phone_number) 
-    VALUES (:customer_company, :manager_id, :department, :full_name, :employee_id, :email, :phone_number)");
-    $stmt->execute([
-        'customer_company' => $customer_company,
-        'manager_id' => $manager_id,
-        'department' => $department,
-        'full_name' => $full_name,
-        'employee_id' => $employee_id,
-        'email' => $email,
-        'phone_number' => $phone_number
-    ]);
-    
-    $success_message = "고객 담당자가 성공적으로 등록되었습니다.";
+    // 비밀번호 확인
+    if ($user_passwd !== $confirm_passwd) {
+        $error_message = '비밀번호가 일치하지 않습니다. 다시 시도해주세요.';
+    }
+
+    // 비밀번호 해시화
+    $hashed_password = password_hash($user_passwd, PASSWORD_DEFAULT);
+
+    // 중복 체크
+    if (empty($error_message)) {
+        try {
+            // 사용자 ID 중복 체크
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM MEMBERS WHERE MEM_ID = :user_id");
+            $stmt->execute(['user_id' => $user_id]);
+            $result = $stmt->fetchColumn();
+
+            // 중복이 있으면 오류 메시지 표시
+            if ($result > 0) {
+                $error_message = "이미 사용 중인 아이디가 있습니다. 다른 값을 입력해주세요.";
+            } else {
+                // 중복 없으면 데이터베이스에 입력
+                $stmt = $pdo->prepare("
+                    INSERT INTO MEMBERS (COM_ID, MEM_ID, MEM_PW, MEM_TEAM, MEM_NAME, MEM_EMAIL, MEM_PHONENUM) 
+                    VALUES (:customer_company, :user_id, :hashed_password, :department, :full_name, :email, :phone_number)
+                ");
+                $stmt->execute([
+                    'customer_company' => $customer_company,
+                    'user_id' => $user_id,
+                    'hashed_password' => $hashed_password,
+                    'department' => $department,
+                    'full_name' => $full_name,
+                    'email' => $email,
+                    'phone_number' => $phone_number
+                ]);
+
+                $success_message = "고객 담당자가 성공적으로 등록되었습니다.";
+            }
+        } catch (PDOException $e) {
+            $error_message = "데이터베이스 에러: " . htmlspecialchars($e->getMessage());
+        }
+    }
 }
 ?>
 
+<!-- HTML 폼 부분 -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -42,18 +74,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             padding: 0;
             background-color: #f9f9f9;
         }
-        .title_main {
-            font-weight: bold;
-            color: #003399;
-            font-size: 36px;
-            font-family: 'Arial', sans-serif;
-        }
-        .title_sub {
-            font-weight: normal;
-            color: rgb(1, 68, 202);
-            font-size: 36px;
-            font-family: 'Arial', sans-serif;
-        }
         .container {
             max-width: 600px;
             margin: 50px auto;
@@ -62,10 +82,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border: 1px solid #ddd;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        h2 {
-            text-align: center;
-            color: #003399;
         }
         .form-group {
             margin-bottom: 15px;
@@ -106,36 +122,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             margin-bottom: 15px;
         }
     </style>
-    <script>
-        function validatePasswords() {
-            const password = document.getElementById('manager_passwd').value;
-            const confirmPassword = document.getElementById('confirm_passwd').value;
-            const errorMessage = document.getElementById('password-match-message');
-
-            if (password !== confirmPassword) {
-                errorMessage.style.display = 'block';
-                return false; // 폼 제출 중지
-            } else {
-                errorMessage.style.display = 'none';
-                return true;
-            }
-        }
-    </script>    
 </head>
 <body>
     <div class="container">
         <h2>고객사 회원가입</h2>
+        <?php if (!empty($error_message)): ?>
+            <p class="error-message"><?php echo $error_message; ?></p>
+        <?php endif; ?>
         <?php if (!empty($success_message)): ?>
             <p class="success-message"><?php echo $success_message; ?></p>
-        <?php endif; ?>
+            <script type="text/javascript">
+                // 알림창 표시 후 main.php로 리디렉션
+                alert("<?php echo $success_message; ?>");
+                window.location.href = "main.php"; // main.php로 이동
+            </script>
+            <?php endif; ?>
         <form method="POST" action="">
             <div class="form-group">
-                <label for="manager_id">아이디</label>
-                <input type="text" id="manager_id" name="manager_id" required>
+                <label for="user_id">아이디</label>
+                <input type="text" id="user_id" name="user_id" required>
             </div>
             <div class="form-group">
-                <label for="manager_passwd">비밀번호</label>
-                <input type="text" id="manager_passwd" name="manager_passwd" required>
+                <label for="user_passwd">비밀번호</label>
+                <input type="text" id="user_passwd" name="user_passwd" required>
             </div>
             <div class="form-group">
                 <label for="confirm_passwd">비밀번호 확인</label>

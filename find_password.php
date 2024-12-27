@@ -3,31 +3,46 @@ session_start();
 require 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = $_POST['username'];
-    $manager_name = $_POST['manager_name'];
+    $user_id = $_POST['user_id'];
+    $search_option = $_POST['search_option'];
+    $phone_number = $_POST['phone_number'] ?? null;
+    $email = $_POST['email'] ?? null;
 
-    // 아이디와 담당자 이름으로 사용자 정보 찾기
-    $stmt = $pdo->prepare("SELECT * FROM MEMBERS WHERE MEM_ID = :username AND manager_name = :manager_name");
-    $stmt->execute(['username' => $username, 'manager_name' => $manager_name]);
+    // 조건에 따라 사용자 정보 찾기
+    if ($search_option === 'phone' && !empty($phone_number)) {
+        $stmt = $pdo->prepare("SELECT * FROM MEMBERS WHERE MEM_ID = :user_id AND MEM_PHONENUM = :phone_number");
+        $stmt->execute(['user_id' => $user_id, 'phone_number' => $phone_number]);
+    } elseif ($search_option === 'email' && !empty($email)) {
+        $stmt = $pdo->prepare("SELECT * FROM MEMBERS WHERE MEM_ID = :user_id AND MEM_EMAIL = :email");
+        $stmt->execute(['user_id' => $user_id, 'email' => $email]);
+    } else {
+        $error = "옵션에 맞는 정보를 정확히 입력하세요!";
+    }
+
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user) {
-        // 이메일로 임시 패스워드 전송
-        $temporary_password = bin2hex(random_bytes(8)); // 임시 비밀번호 생성
+        // 임시 비밀번호 생성
+        $temporary_password = bin2hex(random_bytes(4)); // 임시 비밀번호 생성 (8자리)
         $hashed_password = md5($temporary_password); // MD5는 예제용. 실제론 password_hash 사용 권장.
 
         // 사용자 비밀번호를 임시 비밀번호로 업데이트
-        $update_stmt = $pdo->prepare("UPDATE users SET password = :password WHERE id = :id");
-        $update_stmt->execute(['password' => $hashed_password, 'id' => $user['id']]);
+        $update_stmt = $pdo->prepare("UPDATE MEMBERS SET MEM_PW = :password WHERE MEM_ID = :id");
+        $update_stmt->execute(['password' => $hashed_password, 'id' => $user['MEM_ID']]);
 
-        // 이메일로 임시 비밀번호 전송 (메일 전송 로직 필요)
-        mail($user['email'], '임시 비밀번호 안내', "임시 비밀번호: $temporary_password");
-
-        $success_message = "임시 비밀번호가 등록된 이메일로 전송되었습니다.";
+        // 성공 메시지 표시
+        $success_message = "임시 비밀번호가 생성되었습니다. <br>아이디: {$user['MEM_ID']}<br>비밀번호: $temporary_password";
     } else {
-        $error = "아이디 또는 담당자 이름이 일치하지 않습니다!";
+        if ($search_option === 'phone') {
+            $error = "아이디나 휴대전화가 올바르지 않습니다!";
+        } elseif ($search_option === 'email') {
+            $error = "아이디나 이메일이 올바르지 않습니다!";
+        }
     }
 }
+?>
+
+
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -143,8 +158,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <p>아래 정보를 입력하시면 본인 확인을 거쳐 비밀번호를 찾아 드립니다.<br><br>옵션을 선택하고 정보를 입력해주세요.</p>
         <?php if (!empty($error)): ?>
             <p class="error-message"><?php echo $error; ?></p>
-        <?php elseif (!empty($found_username)): ?>
-            <p class="success-message">등록된 정보에 해당하는 비밀번호는 <strong><?php echo $found_username; ?></strong> 입니다.</p>
+        <?php elseif (!empty($found_id)): ?>
+            <p class="success-message">등록된 정보에 해당하는 비밀번호는 <strong><?php echo $found_id; ?></strong> 입니다.</p>
         <?php endif; ?>
         <form method="POST" action="">
             <div class="form-group">
@@ -154,18 +169,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <option value="email">E-mail로 찾기</option>
                 </select>
             </div>
-            <div class="form-group" id="username-group" style="display: none;">
-                <label for="username">아이디</label>
-                <input type="text" id="username" name="username" required>
+            <div class="form-group" id="id-group" style="display: none;">
+                <label for="user_id">아이디</label>
+                <input type="text" id="user_id" name="MEM_ID" required>
+            </div>
+            <div class="form-group" id="name-group" style="display: none;">
+                <label for="username">성명</label>
+                <input type="text" id="username" name="MEM_NAME" required>
             </div>
             <div class="form-group" id="phone-group" style="display: none;">
                 <label for="phone_number">휴대폰</label>
-                <input type="text" id="phone_number" name="phone_number">
+                <input type="text" id="phone_number" name="MEM_PHONENUM">
                 <p class="small-hint">예) 01012345678로 '-' 제외하고 입력</p>
             </div>
             <div class="form-group" id="email-group" style="display: none;">
                 <label for="email">E-mail</label>
-                <input type="email" id="email" name="email">
+                <input type="email" id="email" name="MEM_EMAIL">
                 <p class="small-hint">예) ***@hyundai.com 등의 형식으로 전체 입력</p>
             </div>
             <button type="submit">비밀번호 찾기</button>
@@ -178,7 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script>
     function toggleFields() {
         const searchOption = document.getElementById('search_option').value;
-        const groups = document.querySelectorAll('#name-group, #phone-group, #email-group');
+        const groups = document.querySelectorAll('#id-group, #name-group, #phone-group, #email-group');
 
         // 모든 그룹을 숨김
         groups.forEach(group => {
@@ -188,10 +207,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // 선택된 옵션에 따라 관련 그룹만 표시
         if (searchOption === 'phone') {
             document.getElementById('phone-group').style.display = 'block';
-            document.getElementById('username-group').style.display = 'block';
+            document.getElementById('id-group').style.display = 'block';
         } else if (searchOption === 'email') {
             document.getElementById('email-group').style.display = 'block';
-            document.getElementById('username-group').style.display = 'block';
+            document.getElementById('id-group').style.display = 'block';
         }
     }
 </script>

@@ -1,34 +1,40 @@
 <?php
 session_start();
-require_once 'db_connect.php';
+require_once 'db.php';
 
 // Delete user functionality
-if(isset($_POST['delete_id'])) {
+if (isset($_POST['delete_id'])) {
     $delete_id = $_POST['delete_id'];
-    $delete_query = "DELETE FROM members WHERE id = ?";
-    $stmt = $conn->prepare($delete_query);
-    $stmt->bind_param("i", $delete_id);
+    $delete_query = "DELETE FROM MEMBERS WHERE id = :id";
+    $stmt = $pdo->prepare($delete_query);
+    $stmt->bindValue(':id', $delete_id, PDO::PARAM_INT);
     $stmt->execute();
     header("Location: admin_board.php");
     exit();
 }
 
 // Update user functionality
-if(isset($_POST['update'])) {
+if (isset($_POST['update'])) {
     $id = $_POST['id'];
-    $mem_id = $_POST['mem_id'];
-    $mem_pw = $_POST['mem_pw'];
-    $com_id = $_POST['com_id'];
-    $team = $_POST['team'];
-    $mem_name = $_POST['mem_name'];
-    $mem_phonnum = $_POST['mem_phonnum'];
-    $mem_email = $_POST['mem_email'];
+    $mem_id = $_POST['MEM_ID'];
+    $mem_pw = $_POST['MEM_PW'];
+    $com_id = $_POST['COM_ID'];
+    $mem_team = $_POST['MEM_TEAM'];
+    $mem_name = $_POST['MEM_NAME'];
+    $mem_phonnum = $_POST['MEM_PHONENUM'];
+    $mem_email = $_POST['MEM_EMAIL'];
 
-    $update_query = "UPDATE members SET mem_id=?, mem_pw=?, com_id=?, team=?, 
-                    mem_name=?, mem_phonnum=?, mem_email=? WHERE id=?";
-    $stmt = $conn->prepare($update_query);
-    $stmt->bind_param("sssssssi", $mem_id, $mem_pw, $com_id, $team, $mem_name, 
-                      $mem_phonnum, $mem_email, $id);
+    $update_query = "UPDATE MEMBERS SET MEM_ID = :mem_id, MEM_PW = :mem_pw, COM_ID = :com_id, MEM_TEAM = :mem_team, 
+                    MEM_NAME = :mem_name, MEM_PHONENUM = :mem_phonnum, MEM_EMAIL = :mem_email WHERE id = :id";
+    $stmt = $pdo->prepare($update_query);
+    $stmt->bindValue(':mem_id', $mem_id, PDO::PARAM_STR);
+    $stmt->bindValue(':mem_pw', $mem_pw, PDO::PARAM_STR);
+    $stmt->bindValue(':com_id', $com_id, PDO::PARAM_STR);
+    $stmt->bindValue(':mem_team', $mem_team, PDO::PARAM_STR);
+    $stmt->bindValue(':mem_name', $mem_name, PDO::PARAM_STR);
+    $stmt->bindValue(':mem_phonnum', $mem_phonnum, PDO::PARAM_STR);
+    $stmt->bindValue(':mem_email', $mem_email, PDO::PARAM_STR);
+    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
     $stmt->execute();
     header("Location: admin_board.php");
     exit();
@@ -242,18 +248,18 @@ if(isset($_POST['update'])) {
                         </thead>
                         <tbody>
                             <?php
-                            $query = "SELECT * FROM members ORDER BY id DESC";
-                            $result = $conn->query($query);
+                            $query = "SELECT * FROM MEMBERS ORDER BY id DESC";
+                            $result = $pdo->query($query);
                             
-                            while($row = $result->fetch_assoc()) {
+                            while($row = $result->fetch(PDO::FETCH_ASSOC)) {
                                 echo "<tr>";
                                 echo "<td>" . $row['id'] . "</td>";
-                                echo "<td>" . $row['mem_id'] . "</td>";
-                                echo "<td>" . $row['com_id'] . "</td>";
-                                echo "<td>" . $row['team'] . "</td>";
-                                echo "<td>" . $row['mem_name'] . "</td>";
-                                echo "<td>" . $row['mem_phonnum'] . "</td>";
-                                echo "<td>" . $row['mem_email'] . "</td>";
+                                echo "<td>" . $row['MEM_ID'] . "</td>";
+                                echo "<td>" . $row['COM_ID'] . "</td>";
+                                echo "<td>" . $row['MEM_TEAM'] . "</td>";
+                                echo "<td>" . $row['MEM_NAME'] . "</td>";
+                                echo "<td>" . $row['MEM_PHONENUM'] . "</td>";
+                                echo "<td>" . $row['MEM_EMAIL'] . "</td>";
                                 echo "<td>
                                         <button class='btn btn-edit' onclick='editUser({$row['id']})'>수정</button>
                                         <button class='btn btn-delete' onclick='deleteUser({$row['id']})'>삭제</button>
@@ -269,7 +275,7 @@ if(isset($_POST['update'])) {
     <div id="add-customer" style="display: none;">
     <h2 class="page-title">고객사 추가</h2>
     <div class="form-container">
-        <form class="add-form" method="POST" action="add_customer.php">
+        <form class="add-form" method="POST" action="admin_addCustomer.php">
             <table class="form-table">
                 <thead>
                     <tr>
@@ -278,32 +284,32 @@ if(isset($_POST['update'])) {
                 </thead>
                 <tbody>
                     <tr>
-                        <td><label for="mem_id">사용자 ID</label></td>
-                        <td><input type="text" id="mem_id" name="mem_id" required></td>
+                        <td><label for="mem_id">아이디</label></td>
+                        <td><input type="text" id="mem_id" name="MEM_ID" required></td>
                     </tr>
                     <tr>
                         <td><label for="mem_pw">비밀번호</label></td>
-                        <td><input type="password" id="mem_pw" name="mem_pw" required></td>
+                        <td><input type="password" id="mem_pw" name="MEM_PW" required></td>
                     </tr>
                     <tr>
-                        <td><label for="com_id">회사 ID</label></td>
-                        <td><input type="text" id="com_id" name="com_id" required></td>
+                        <td><label for="com_id">고객사 ID</label></td>
+                        <td><input type="text" id="com_id" name="COM_ID" required></td>
                     </tr>
                     <tr>
-                        <td><label for="team">팀</label></td>
-                        <td><input type="text" id="team" name="team" required></td>
+                        <td><label for="mem_team">부서</label></td>
+                        <td><input type="text" id="mem_team" name="MEM_TEAM" required></td>
                     </tr>
                     <tr>
-                        <td><label for="mem_name">이름</label></td>
-                        <td><input type="text" id="mem_name" name="mem_name" required></td>
+                        <td><label for="mem_name">성명</label></td>
+                        <td><input type="text" id="mem_name" name="MEM_NAME" required></td>
                     </tr>
                     <tr>
-                        <td><label for="mem_phonnum">전화번호</label></td>
-                        <td><input type="tel" id="mem_phonnum" name="mem_phonnum" required></td>
+                        <td><label for="mem_phonenum">연락처(휴대폰)</label></td>
+                        <td><input type="tel" id="mem_phonenum" name="MEM_PHONENUM" required></td>
                     </tr>
                     <tr>
-                        <td><label for="mem_email">이메일</label></td>
-                        <td><input type="email" id="mem_email" name="mem_email" required></td>
+                        <td><label for="mem_email">E-mail</label></td>
+                        <td><input type="email" id="mem_email" name="MEM_EMAIL" required></td>
                     </tr>
                     <tr>
                         <td colspan="2" class="button-cell">
@@ -368,7 +374,7 @@ if(isset($_POST['update'])) {
         }
 
         function editUser(id) {
-            window.location.href = `edit_user.php?id=${id}`;
+            window.location.href = `admin_editUser.php?id=${id}`;
         }
     </script>
 </body>

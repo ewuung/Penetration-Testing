@@ -4,10 +4,10 @@ require 'db.php'; // PDO 연결 포함
 
 try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $user_id = $_SESSION['MEM_ID'];
+        $user['MEM_ID'] = $_SESSION['user_id'];
 
         // 입력 데이터 가져오기
-        $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+        $password = password_hash($_POST['MEM_PW'], PASSWORD_BCRYPT);
         $company_name = $_POST['COM_NAME'];
         $team = $_POST['MEM_TEAM'];
         $name = $_POST['MEM_NAME'];

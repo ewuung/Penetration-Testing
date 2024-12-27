@@ -2,27 +2,48 @@
 session_start();
 require 'db.php';
 
-try {
-    // 사용자 세션 정보 확인
-    if (!isset($_SESSION['MEM_ID'])) {
-        die("로그인이 필요합니다.");
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // 사용자가 제출한 폼 데이터 처리
+    $user_id = $_SESSION['user_id'];
+    $customer_company = $_POST['customer_company'];
+    $department = $_POST['department'];
+    $full_name = $_POST['full_name'];
+    $email = $_POST['email'];
+    $phone_number = $_POST['phone_number'];
+    $user_passwd = isset($_POST['user_passwd']) ? $_POST['user_passwd'] : null; // 비밀번호가 제출되었는지 확인
+
+    // 비밀번호가 수정된 경우에만 비밀번호를 업데이트
+    $update_fields = [
+        'customer_company' => $customer_company,
+        'department' => $department,
+        'full_name' => $full_name,
+        'email' => $email,
+        'phone_number' => $phone_number,
+        'user_id' => $user_id
+    ];
+
+    if ($user_passwd) {
+        $update_fields['user_passwd'] = password_hash($user_passwd, PASSWORD_DEFAULT); // 비밀번호 해시화
+        $sql = "UPDATE MEMBERS SET COM_ID = :customer_company, MEM_TEAM = :department, MEM_NAME = :full_name, MEM_PW = :user_passwd, MEM_EMAIL = :email, MEM_PHONENUM = :phone_number WHERE MEM_ID = :user_id";
+    } else {
+        $sql = "UPDATE MEMBERS SET COM_ID = :customer_company, MEM_TEAM = :department, MEM_NAME = :full_name, MEM_EMAIL = :email, MEM_PHONENUM = :phone_number WHERE MEM_ID = :user_id";
     }
 
-    $user_id = $_SESSION['MEM_ID'];
+    // 데이터베이스에서 사용자 정보 업데이트
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($update_fields);
 
-    // 사용자 정보 가져오기
-    $query = "SELECT * FROM MEMBER WHERE MEM_ID = :user_id";
-    $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':user_id', $user_id, PDO::PARAM_STR);
-    $stmt->execute();
+    $success_message = "회원 정보가 성공적으로 수정되었습니다.";
+}
+
+// 기존 사용자 정보를 가져오기 위한 코드
+if (isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
+    $stmt = $pdo->prepare("SELECT * FROM MEMBERS WHERE MEM_ID = :user_id");
+    $stmt->execute(['user_id' => $user_id]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$user) {
-        die("사용자 정보를 찾을 수 없습니다.");
-    }
-} catch (PDOException $e) {
-    error_log("DB 오류: " . $e->getMessage(), 3, '/path/to/logfile.log');
-    die("데이터를 가져오는데 문제가 발생했습니다.");
+} else {
+    die("로그인이 필요합니다.");
 }
 ?>
 
@@ -39,18 +60,6 @@ try {
             padding: 0;
             background-color: #f9f9f9;
         }
-        .title_main {
-            font-weight: bold;
-            color: #003399;
-            font-size: 36px;
-            font-family: 'Arial', sans-serif;
-        }
-        .title_sub {
-            font-weight: normal;
-            color: rgb(1, 68, 202);
-            font-size: 36px;
-            font-family: 'Arial', sans-serif;
-        }
         .container {
             max-width: 600px;
             margin: 50px auto;
@@ -60,11 +69,6 @@ try {
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        .container p {
-            color: red;
-            font-weight: bold;
-            font-size: 14px;
-        }
         h2 {
             text-align: center;
             color: #003399;
@@ -72,120 +76,81 @@ try {
         .form-group {
             margin-bottom: 15px;
         }
-        select {
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
             width: calc(100% - 20px);
             padding: 8px;
             margin-bottom: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
         }
-        .error-message {
-            color: red;
-            text-align: center;
-            margin-bottom: 15px;
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #003399;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #002266;
         }
         .success-message {
             color: green;
             text-align: center;
             margin-bottom: 15px;
         }
-        form {
-            width: 400px;
-            margin: 0 auto;
-            font-family: Arial, sans-serif;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-        input[type="text"], input[type="password"], input[type="email"], input[type="tel"] {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
-            background-color: #003399;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0055cc;
-        }
-        /* 버튼을 가운데 정렬 */
-        .button-container {
-            text-align: center;
-            margin-top: 20px;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>회원 정보 수정</h2>
-        <form action="updateCustomerInfo.php" method="POST">
+        <?php if (!empty($success_message)): ?>
+            <p class="success-message"><?php echo $success_message; ?></p>
+        <?php endif; ?>
+        <form method="POST" action="">
             <div class="form-group">
-                <label for="user_id">아이디 (변경 불가)</label>
-                <input type="text" id="user_id" name="user_id" value="<?= htmlspecialchars($user['MEM_ID']) ?>" readonly>
-            </div>
-            <div class="form-group">
-                <label for="password">비밀번호</label>
-                <input type="password" id="password" name="password" placeholder="새 비밀번호">
-            </div>
-            <div class="form-group">
-                <label for="password_confirm">비밀번호 확인</label>
-                <input type="password" id="password_confirm" name="password_confirm" placeholder="비밀번호 확인">
-            </div>
-            <div class="form-group">
-                <label for="company_name">고객사명</label>
-                <input type="text" id="company_name" name="company_name" value="<?= htmlspecialchars($user['COM_NAME']) ?>">
+                <label for="customer_company">고객사</label>
+                <select id="customer_company" name="customer_company" required>
+                    <option value="">고객사를 선택하세요.</option>
+                    <option value="company1" <?php if ($user['customer_company'] === 'company1') echo 'selected'; ?>>현대오토에버(자산)</option>
+                    <option value="company2" <?php if ($user['customer_company'] === 'company2') echo 'selected'; ?>>현대오토에버(판매)</option>
+                    <!-- 추가 회사 옵션들 -->
+                </select>
             </div>
             <div class="form-group">
-                <label for="company_code">고객사 코드 (자동 입력)</label>
-                <input type="text" id="company_code" name="company_code" value="<?= htmlspecialchars($user['COM_CODE']) ?>" readonly>
+                <label for="department">부서</label>
+                <select id="department" name="department" required>
+                    <option value="">부서를 선택하세요.</option>
+                    <option value="Management Support" <?php if ($user['department'] === 'Management Support') echo 'selected'; ?>>경영지원팀</option>
+                    <option value="Management Support Systems" <?php if ($user['department'] === 'Management Support Systems') echo 'selected'; ?>>경영지원시스템팀</option>
+                    <!-- 추가 부서 옵션들 -->
+                </select>
             </div>
             <div class="form-group">
-                <label for="team">부서</label>
-                <input type="text" id="team" name="team" value="<?= htmlspecialchars($user['MEM_TEAM']) ?>">
+                <label for="full_name">성명</label>
+                <input type="text" id="full_name" name="full_name" value="<?php echo htmlspecialchars($user['full_name']); ?>" required>
             </div>
             <div class="form-group">
-                <label for="name">성명</label>
-                <input type="text" id="name" name="name" value="<?= htmlspecialchars($user['MEM_NAME']) ?>">
+                <label for="phone_number">연락처(휴대폰)</label>
+                <input type="tel" id="phone_number" name="phone_number" value="<?php echo htmlspecialchars($user['phone_number']); ?>" required>
             </div>
             <div class="form-group">
-                <label for="phone">연락처</label>
-                <input type="tel" id="phone" name="phone" value="<?= htmlspecialchars($user['MEM_PHONNUM']) ?>">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
             </div>
             <div class="form-group">
-                <label for="email">이메일</label>
-                <input type="email" id="email" name="email" value="<?= htmlspecialchars($user['MEM_EMAIL']) ?>">
+                <label for="user_passwd">비밀번호</label>
+                <input type="password" id="user_passwd" name="user_passwd" placeholder="비밀번호를 입력하세요 (수정 시)">
             </div>
-            <div class="button-container">
-                <button type="submit">정보 수정</button>
-            </div>
+            <button type="submit">수정</button>
         </form>
-
-        <script>
-            // 고객사명 입력 시 고객사 코드 자동 가져오기
-            $('#company_name').on('input', function() {
-                var companyName = $(this).val();
-                $.ajax({
-                    url: 'getCompanyCode.php',
-                    type: 'POST',
-                    data: { company_name: companyName },
-                    success: function(data) {
-                        $('#company_code').val(data); // 고객사 코드 입력 필드에 데이터 설정
-                    },
-                    error: function() {
-                        alert('고객사 코드를 가져오는데 실패했습니다.');
-                    }
-                });
-            });
-        </script>
     </div>
 </body>
 </html>

@@ -1,19 +1,8 @@
 <?php
 session_start();  // 세션 시작
 
-// DB 연결 설정
-$servername = "localhost";
-$username = "root"; // DB 사용자 이름
-$password = ""; // DB 비밀번호
-$dbname = "vaatzit"; // 실제 DB 이름으로 변경
-
-// MySQL 연결
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// 연결 확인
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+// DB 연결 코드 포함
+include('db.php'); // db.php에서 DB 연결 코드 포함
 
 // 로그인 처리
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -22,22 +11,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
 
     // SQL 쿼리 작성 (userID로 사용자 정보 가져오기)
-    $sql = "SELECT id, admin_id, admin_pw FROM admin WHERE admin_id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $userID); // 's'는 문자열 형식
+    $sql = "SELECT * FROM ADMIN WHERE ADMIN_ID = :userID";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':userID', $userID, PDO::PARAM_STR); // 's'는 문자열 형식
     $stmt->execute();
-    $result = $stmt->get_result();
-
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
     // 사용자 정보가 존재하면
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-
+    if ($result) {
         // 비밀번호 검증 (admin_pw와 사용자가 입력한 비밀번호 비교)
-        if ($password === $user['admin_pw']) {
+        if ($password === $result['ADMIN_PW']) {
             // 로그인 성공 시 세션에 사용자 정보 저장
-            $_SESSION['userID'] = $userID;
-            $_SESSION['user_name'] = $user['admin_id'];  // 예시로 사용자 이름도 저장 가능
-
+            $_SESSION['userID'] = $result['ADMIN_ID'];
             // 로그인 성공 후 admin_board.php로 리디렉션
             header("Location: admin_board.php");  // admin_board.php로 이동
             exit();
@@ -51,11 +36,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // 연결 종료
-    $stmt->close();
+    $stmt = null;
 }
-
-// DB 연결 종료
-$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -109,7 +91,7 @@ $conn->close();
 
         input[type="text"],
         input[type="password"] {
-            width: 100%;
+            width: 90%;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -162,7 +144,7 @@ $conn->close();
             <?php if (isset($error)) { echo "<p class='error'>$error</p>"; } ?>
         </form>
         <p class="info-message">
-            ※ ID/비밀번호 분실, 재발급 건은 담당자에게 연락주시기 바랍니다.
+            ※ ID/비밀번호 분실, 재발급 건은<br>담당자에게 연락주시기 바랍니다.
         </p>
     </div>
 </body>
