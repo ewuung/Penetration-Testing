@@ -1,6 +1,6 @@
 <?php
 $host = 'localhost';
-$dbname = 'login_db';
+$dbname = 'vaatzit';
 $username = 'root'; // XAMPP 기본 사용자
 $password = ''; // XAMPP 기본 비밀번호 없음
 
@@ -10,4 +10,5 @@ try {
 } catch (PDOException $e) {
     die("Database connection failed: " . $e->getMessage());
 }
+
 ?>

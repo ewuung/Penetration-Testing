@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: home.php");
         exit;
     } else {
-        $error = "Invalid ID or Password!";
+        $error = "아이디 또는 비밀번호가 잘못 되었습니다.";
     }
 }
 ?>
