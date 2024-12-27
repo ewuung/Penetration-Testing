@@ -1,5 +1,7 @@
 <?php
-// main.php
+$_SESSION['user_id'] = $user_id; // 사용자 ID를 세션에 저장
+header("Location: home.php"); // 홈 페이지로 이동
+exit;
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -123,12 +125,14 @@
     </style>
 </head>
 <body>
-    <header>
-        <h1>
-          <span class="title_main">현대오토에버</span> 
-          <span class="title_sub">VaatzIT</span>
-        </h1>
-    </header>
+<header>
+    <h1>
+        <a href="main.php" class="title_main" style="text-decoration: none; color: inherit;">
+            <span class="title_main">현대오토에버</span>
+        </a>
+        <span class="title_sub">VaatzIT</span>
+    </h1>
+</header>
     <div class="container">
         <!-- 로그인 섹션 -->
         <div class="login-section">

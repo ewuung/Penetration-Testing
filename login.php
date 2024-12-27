@@ -112,14 +112,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </style>
 </head>
 <body>
-    <header>
-        <h1>
+<header>
+    <h1>
+        <a href="main.php" class="title_main" style="text-decoration: none; color: inherit;">
             <span class="title_main">현대오토에버</span>
-            <span class="title_sub">VaatzIT</span>
-        </h1>
-    </header>
+        </a>
+        <span class="title_sub">VaatzIT</span>
+    </h1>
+</header>
+
     <div class="container">
-        <h2>로그인</h2>
+        <h2>Login 로그인</h2>
         <?php if (!empty($error)): ?>
             <p class="error-message"><?php echo $error; ?></p>
         <?php endif; ?>

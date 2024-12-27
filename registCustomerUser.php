@@ -17,12 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $phone_number = $_POST['phone_number'] ?? null;
 
     // 비밀번호 확인
-    if ($user_passwd !== $confirm_passwd) {
+    if (($user_passwd) !== $confirm_passwd) {
         $error_message = '비밀번호가 일치하지 않습니다. 다시 시도해주세요.';
     }
-
-    // 비밀번호 해시화
-    $hashed_password = password_hash($user_passwd, PASSWORD_DEFAULT);
 
     // 중복 체크
     if (empty($error_message)) {
@@ -39,12 +36,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // 중복 없으면 데이터베이스에 입력
                 $stmt = $pdo->prepare("
                     INSERT INTO MEMBERS (COM_ID, MEM_ID, MEM_PW, MEM_TEAM, MEM_NAME, MEM_EMAIL, MEM_PHONENUM) 
-                    VALUES (:customer_company, :user_id, :hashed_password, :department, :full_name, :email, :phone_number)
+                    VALUES (:customer_company, :user_id, :user_passwd, :department, :full_name, :email, :phone_number)
                 ");
                 $stmt->execute([
                     'customer_company' => $customer_company,
                     'user_id' => $user_id,
-                    'hashed_password' => $hashed_password,
+                    'user_passwd' => md5($user_passwd),
                     'department' => $department,
                     'full_name' => $full_name,
                     'email' => $email,
@@ -73,6 +70,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             margin: 0;
             padding: 0;
             background-color: #f9f9f9;
+        }
+        header {
+            background-color: white;
+            color:  #003399;
+            padding-left: 11%;
+            text-align: left;
+            border-bottom: 4px solid #003399;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        .title_main {
+            font-weight: bold;
+            color: #003399;
+            font-size: 36px;
+            font-family: 'Arial', sans-serif;
+        }
+        .title_sub {
+            font-weight: normal;
+            color: rgb(1, 68, 202);
+            font-size: 36px;
+            font-family: 'Arial', sans-serif;
         }
         .container {
             max-width: 600px;
@@ -124,6 +143,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </style>
 </head>
 <body>
+<header>
+    <h1>
+        <a href="main.php" class="title_main" style="text-decoration: none; color: inherit;">
+            <span class="title_main">현대오토에버</span>
+        </a>
+        <span class="title_sub">VaatzIT</span>
+    </h1>
+</header>
     <div class="container">
         <h2>고객사 회원가입</h2>
         <?php if (!empty($error_message)): ?>
