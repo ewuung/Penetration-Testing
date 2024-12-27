@@ -125,12 +125,14 @@ $user['MEM_NAME'] = $_SESSION['username']; // 로그인 시 저장된 사용자 
     </style>
 </head>
 <body>
-    <header>
-        <h1>
-          <span class="title_main">현대오토에버</span> 
-          <span class="title_sub">VaatzIT</span>
-        </h1>
-    </header>
+<header>
+    <h1>
+        <a href="home.php" class="title_main" style="text-decoration: none; color: inherit;">
+            <span class="title_main">현대오토에버</span>
+        </a>
+        <span class="title_sub">VaatzIT</span>
+    </h1>
+</header>
     <div class="container">
         <!-- 사용자 환영 섹션 -->
         <div class="welcome-section">

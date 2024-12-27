@@ -3,24 +3,23 @@ session_start();
 require 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $search_option = $_POST['search_option'];
+    $search_option = $_POST['search_option'] ?? null;
+    $username = $_POST['username'] ?? null;
+    $phone_number = $_POST['phone_number'] ?? null;
+    $email = $_POST['email'] ?? null;
 
     if ($search_option === 'phone') {
-        $phone_number = $_POST['phone_number'];
-
-        $stmt = $pdo->prepare("SELECT * FROM MEMBERS WHERE MEM_PHONENUM = :phone_number");
-        $stmt->execute(['phone_number' => $phone_number]);
+        $stmt = $pdo->prepare("SELECT * FROM MEMBERS WHERE MEM_NAME = :username AND MEM_PHONENUM = :phone_number");
+        $stmt->execute(['username' => $username, 'phone_number' => $phone_number]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
     } elseif ($search_option === 'email') {
-        $email = $_POST['email'];
-
-        $stmt = $pdo->prepare("SELECT * FROM MEMBERS WHERE MEM_EMAIL = :email");
-        $stmt->execute(['email' => $email]);
+        $stmt = $pdo->prepare("SELECT * FROM MEMBERS WHERE MEM_NAME = :username AND MEM_EMAIL = :email");
+        $stmt->execute(['username' => $username, 'email' => $email]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
     if ($user) {
-        $found_username = $user['username'];
+        $user_id = $user['MEM_ID'];
     } else {
         $error = "입력하신 정보와 일치하는 아이디가 없습니다!";
     }
@@ -129,20 +128,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </style>
 </head>
 <body>
-    <header>
-        <h1>
+<header>
+    <h1>
+        <a href="main.php" class="title_main" style="text-decoration: none; color: inherit;">
             <span class="title_main">현대오토에버</span>
-            <span class="title_sub">VaatzIT</span>
-        </h1>
-    </header>
+        </a>
+        <span class="title_sub">VaatzIT</span>
+    </h1>
+</header>
+
     <div class="container">
         <h2>Search ID 아이디 찾기</h2>
         <p>아래 정보를 입력하시면 본인 확인을 거쳐 아이디를 찾아 드립니다.<br><br>옵션을 선택하고 정보를 입력해주세요.</p>
         <?php if (!empty($error)): ?>
             <p class="error-message"><?php echo $error; ?></p>
-        <?php elseif (!empty($found_username)): ?>
-            <p class="success-message">등록된 정보에 해당하는 아이디는 <strong><?php echo $found_username; ?></strong> 입니다.</p>
-        <?php endif; ?>
+        <?php elseif (!empty($user_id)): ?>
+            <p class="success-message">등록된 정보에 해당하는 아이디는 <strong><?php echo $user_id; ?></strong> 입니다.</p>
+            <script>
+                // 아이디 변경 알림창
+                alert('아이디는 ' + '<?php echo $user_id; ?>' + '입니다.');
+                // main.php로 이동
+                window.location.href = 'main.php';
+            </script>
+            <?php endif; ?>
         <form method="POST" action="">
             <div class="form-group">
                 <select id="search_option" name="search_option" onchange="toggleFields()" required>
@@ -152,8 +160,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </select>
             </div>
             <div class="form-group" id="name-group" style="display: none;">
-                <label for="full_name">성명</label>
-                <input type="text" id="full_name" name="full_name" required>
+                <label for="username">성명</label>
+                <input type="text" id="username" name="username" required>
             </div>
             <div class="form-group" id="phone-group" style="display: none;">
                 <label for="phone_number">휴대폰</label>

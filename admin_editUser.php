@@ -104,7 +104,7 @@ if (isset($_GET['id'])) {
             <input type="hidden" name="update" value="1">
             
             <div class="form-group">
-                <label>아이디디</label>
+                <label>아이디</label>
                 <input type="text" name="mem_id" value="<?php echo htmlspecialchars($user['MEM_ID']); ?>" required>
             </div>
             
