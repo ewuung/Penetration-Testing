@@ -1,7 +1,5 @@
 <?php
-$_SESSION['user_id'] = $user_id; // 사용자 ID를 세션에 저장
-header("Location: home.php"); // 홈 페이지로 이동
-exit;
+// main.php
 ?>
 <!DOCTYPE html>
 <html lang="ko">

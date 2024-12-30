@@ -6,11 +6,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = $_POST['id'];
     $password = $_POST['password'];
 
-    $stmt = $pdo->prepare("SELECT * FROM MEMBERS WHERE MEM_ID = :id");
-    $stmt->execute(['id' => $id]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    // 취약한 SQL 쿼리
+    $query = "SELECT * FROM MEMBERS WHERE MEM_ID = '$id'";
+    $result = $pdo->query($query);
+    $user = $result->fetch(PDO::FETCH_ASSOC);
 
-    if ($user && md5($password) === $user['MEM_PW']) { // MD5는 예제용. 실제론 password_verify 사용 권장.
+    if ($user) {
         $_SESSION['user_id'] = $user['MEM_ID'];
         $_SESSION['username'] = $user['MEM_NAME'];
         header("Location: home.php");
