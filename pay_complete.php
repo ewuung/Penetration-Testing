@@ -35,12 +35,12 @@ try {
         $stmt->bindParam(':mem_id', $user['MEM_ID'], PDO::PARAM_STR);
         $stmt->execute();
 
-        $message = "결제가 완료되었습니다. 잔여 포인트: " . $new_points . "원";
+        echo "결제가 완료되었습니다. 잔여 포인트: " . $new_points . "원";
     } else {
-        $message = "포인트가 부족합니다.";
+        echo "포인트가 부족합니다.";
     }
 } catch (Exception $e) {
-    echo "<script>alert('Error: " . htmlspecialchars($e->getMessage(), ENT_QUOTES) . "');</script>";
+    echo "Error: " . htmlspecialchars($e->getMessage());
     exit;
 }
 ?>

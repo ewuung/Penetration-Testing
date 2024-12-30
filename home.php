@@ -146,7 +146,7 @@ $user['MEM_NAME'] = $_SESSION['username']; // 로그인 시 저장된 사용자 
         <div class="grid">
             <div class="card">
                 <h2>고객센터</h2>
-                <a href="#">자세히 보기</a>
+                <a href="support.php">자세히 보기</a>
             </div>
             <div class="card">
                 <h2>고객담당자 등록</h2>
