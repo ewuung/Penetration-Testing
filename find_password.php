@@ -31,12 +31,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // 임시 비밀번호를 사용자에게 전달
         $user_passwd = $temp_password; // 사용자에게 전달할 비밀번호
+        $user_name = $user['MEM_ID'];  // 사용자 아이디 저장
     } else {
         $error = "입력하신 정보와 일치하는 사용자가 없습니다!";
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -182,6 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </form>
     <?php elseif (!empty($user_passwd)): ?>
         <p class="success-message">
+            사용자 아이디: <strong><?php echo $user_name; ?></strong><br>
             임시 비밀번호는 <strong><?php echo $user_passwd; ?></strong> 입니다.<br>
             로그인 후 비밀번호를 반드시 변경해주세요.
         </p>
@@ -235,30 +236,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 </script>
 
-    <footer>
-        <p>COPYRIGHT 2019 HYUNDAI AUTOEVER CORP. ALL RIGHTS RESERVED.</p>
-    </footer>
-
-    <script>
-    function toggleFields() {
-        const searchOption = document.getElementById('search_option').value;
-        const groups = document.querySelectorAll('#id-group, #phone-group, #email-group');
-
-        // 모든 그룹을 숨김
-        groups.forEach(group => {
-            group.style.display = 'none';
-        });
-
-        // 선택된 옵션에 따라 관련 그룹만 표시
-        if (searchOption === 'phone') {
-            document.getElementById('phone-group').style.display = 'block';
-            document.getElementById('id-group').style.display = 'block';
-        } else if (searchOption === 'email') {
-            document.getElementById('email-group').style.display = 'block';
-            document.getElementById('id-group').style.display = 'block';
-        }
-    }
-</script>
+<footer>
+    <p>COPYRIGHT 2019 HYUNDAI AUTOEVER CORP. ALL RIGHTS RESERVED.</p>
+</footer>
 
 </body>
 </html>
