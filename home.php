@@ -154,7 +154,7 @@ $user['MEM_NAME'] = $_SESSION['username']; // 로그인 시 저장된 사용자 
             </div>
             <div class="card">
                 <h2>VaatzIT Mall</h2>
-                <a href="VaatIT_Mall.php">접속하기</a>
+                <a href="VaatzIT_Mall.php">접속하기</a>
             </div>
             <div class="card">
                 <h2>4대 실천사항</h2>
