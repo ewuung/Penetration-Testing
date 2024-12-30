@@ -1,6 +1,17 @@
 <?php
-// main.php
+// 로그인 상태 확인
+session_start();
+if (isset($_SESSION['user_id'])) {
+    // 로그인이 되어있는 경우, 로그인 후 페이지(home.php)로 리다이렉트
+    header("Location: home.php");
+    exit();
+}
+
+// 사용자 정보 (세션에서 가져오기)
+$user['MEM_ID'] = $_SESSION['user_id'];
+$user['MEM_NAME'] = $_SESSION['username']; // 로그인 시 저장된 사용자 이름
 ?>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
