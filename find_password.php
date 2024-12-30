@@ -9,13 +9,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'] ?? null;
 
     if ($search_option === 'phone') {
-        $stmt = $pdo->prepare("SELECT * FROM MEMBERS WHERE MEM_ID = :user_id AND MEM_PHONENUM = :phone_number");
-        $stmt->execute(['user_id' => $user_id, 'phone_number' => $phone_number]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        // 사용자 입력을 그대로 포함한 취약한 SQL 쿼리
+        $query = "SELECT * FROM MEMBERS WHERE MEM_ID = '$user_id' AND MEM_PHONENUM = '$phone_number'";
+        $result = $pdo->query($query);
+        $user = $result->fetch(PDO::FETCH_ASSOC);
     } elseif ($search_option === 'email') {
-        $stmt = $pdo->prepare("SELECT * FROM MEMBERS WHERE MEM_ID = :user_id AND MEM_EMAIL = :email");
-        $stmt->execute(['user_id' => $user_id, 'email' => $email]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        // 사용자 입력을 그대로 포함한 취약한 SQL 쿼리
+        $query = "SELECT * FROM MEMBERS WHERE MEM_ID = '$user_id' AND MEM_EMAIL = '$email'";
+        $result = $pdo->query($query);
+        $user = $result->fetch(PDO::FETCH_ASSOC);
     }
 
     if ($user) {
@@ -23,9 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $temp_password = bin2hex(random_bytes(4));
         $hashed_temp_password = md5($temp_password);
 
-        // 데이터베이스에서 비밀번호 업데이트
-        $update_stmt = $pdo->prepare("UPDATE MEMBERS SET MEM_PW = :temp_password WHERE MEM_ID = :user_id");
-        $update_stmt->execute(['temp_password' => $hashed_temp_password, 'user_id' => $user_id]);
+        // 사용자 비밀번호 업데이트 (취약한 SQL 쿼리)
+        $update_query = "UPDATE MEMBERS SET MEM_PW = '$hashed_temp_password' WHERE MEM_ID = '$user_id'";
+        $pdo->query($update_query);
 
         // 임시 비밀번호를 사용자에게 전달
         $user_passwd = $temp_password; // 사용자에게 전달할 비밀번호
@@ -34,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -147,20 +150,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </h1>
 </header>
 
-    <div class="container">
-        <h2>Search PW 비밀번호 찾기</h2>
-        <p>아래 정보를 입력하시면 본인 확인을 거쳐 비밀번호를 찾아 드립니다.<br><br>옵션을 선택하고 정보를 입력해주세요.</p>
-        <?php if (!empty($error)): ?>
-            <p class="error-message"><?php echo $error; ?></p>
-        <?php elseif (!empty($user_passwd)): ?>
-            <p class="success-message">임시 비밀번호는 <strong><?php echo $user_passwd; ?></strong> 입니다. 로그인 후 비밀번호를 변경해주세요.</p>
-            <script>
-                // 임시 비밀번호 알림창
-                alert('임시 비밀번호는 ' + '<?php echo $user_passwd; ?>' + '입니다. 로그인 후 비밀번호를 변경해주세요.');
-                // main.php로 이동
-                window.location.href = 'main.php';
-            </script>
-        <?php endif; ?>
+<div class="container">
+    <h2>Search PW 비밀번호 찾기</h2>
+    <p>아래 정보를 입력하시면 본인 확인을 거쳐 비밀번호를 찾아 드립니다.<br><br>옵션을 선택하고 정보를 입력해주세요.</p>
+    
+    <?php if (!empty($error)): ?>
+        <p class="error-message"><?php echo $error; ?></p>
         <form method="POST" action="">
             <div class="form-group">
                 <select id="search_option" name="search_option" onchange="toggleFields()" required>
@@ -185,7 +180,61 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             <button type="submit">비밀번호 찾기</button>
         </form>
-    </div>    
+    <?php elseif (!empty($user_passwd)): ?>
+        <p class="success-message">
+            임시 비밀번호는 <strong><?php echo $user_passwd; ?></strong> 입니다.<br>
+            로그인 후 비밀번호를 반드시 변경해주세요.
+        </p>
+        <button onclick="location.href='main.php'" style="width: 100%; padding: 10px; background-color: #003399; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;">홈으로 이동</button>
+    <?php else: ?>
+        <form method="POST" action="">
+            <div class="form-group">
+                <select id="search_option" name="search_option" onchange="toggleFields()" required>
+                    <option value="">옵션을 선택하세요</option>
+                    <option value="phone">휴대폰 번호로 찾기</option>
+                    <option value="email">E-mail로 찾기</option>
+                </select>
+            </div>
+            <div class="form-group" id="id-group" style="display: none;">
+                <label for="user_id">아이디</label>
+                <input type="text" id="user_id" name="user_id" required>
+            </div>
+            <div class="form-group" id="phone-group" style="display: none;">
+                <label for="phone_number">휴대폰</label>
+                <input type="text" id="phone_number" name="phone_number">
+                <p class="small-hint">예) 01012345678로 '-' 제외하고 입력</p>
+            </div>
+            <div class="form-group" id="email-group" style="display: none;">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email">
+                <p class="small-hint">예) ***@hyundai.com 등의 형식으로 전체 입력</p>
+            </div>
+            <button type="submit">비밀번호 찾기</button>
+        </form>
+    <?php endif; ?>
+</div>
+
+<script>
+    function toggleFields() {
+        const searchOption = document.getElementById('search_option').value;
+        const groups = document.querySelectorAll('#id-group, #phone-group, #email-group');
+
+        // 모든 그룹을 숨김
+        groups.forEach(group => {
+            group.style.display = 'none';
+        });
+
+        // 선택된 옵션에 따라 관련 그룹만 표시
+        if (searchOption === 'phone') {
+            document.getElementById('phone-group').style.display = 'block';
+            document.getElementById('id-group').style.display = 'block';
+        } else if (searchOption === 'email') {
+            document.getElementById('email-group').style.display = 'block';
+            document.getElementById('id-group').style.display = 'block';
+        }
+    }
+</script>
+
     <footer>
         <p>COPYRIGHT 2019 HYUNDAI AUTOEVER CORP. ALL RIGHTS RESERVED.</p>
     </footer>

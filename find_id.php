@@ -9,13 +9,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'] ?? null;
 
     if ($search_option === 'phone') {
-        $stmt = $pdo->prepare("SELECT * FROM MEMBERS WHERE MEM_NAME = :username AND MEM_PHONENUM = :phone_number");
-        $stmt->execute(['username' => $username, 'phone_number' => $phone_number]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        // 사용자 입력을 그대로 포함한 취약한 SQL 쿼리
+        $query = "SELECT * FROM MEMBERS WHERE MEM_NAME = '$username' AND MEM_PHONENUM = '$phone_number'";
+        $result = $pdo->query($query);
+        $user = $result->fetch(PDO::FETCH_ASSOC);
     } elseif ($search_option === 'email') {
-        $stmt = $pdo->prepare("SELECT * FROM MEMBERS WHERE MEM_NAME = :username AND MEM_EMAIL = :email");
-        $stmt->execute(['username' => $username, 'email' => $email]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        // 사용자 입력을 그대로 포함한 취약한 SQL 쿼리
+        $query = "SELECT * FROM MEMBERS WHERE MEM_NAME = '$username' AND MEM_EMAIL = '$email'";
+        $result = $pdo->query($query);
+        $user = $result->fetch(PDO::FETCH_ASSOC);
     }
 
     if ($user) {
@@ -25,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -137,20 +140,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </h1>
 </header>
 
-    <div class="container">
-        <h2>Search ID 아이디 찾기</h2>
-        <p>아래 정보를 입력하시면 본인 확인을 거쳐 아이디를 찾아 드립니다.<br><br>옵션을 선택하고 정보를 입력해주세요.</p>
-        <?php if (!empty($error)): ?>
-            <p class="error-message"><?php echo $error; ?></p>
-        <?php elseif (!empty($user_id)): ?>
-            <p class="success-message">등록된 정보에 해당하는 아이디는 <strong><?php echo $user_id; ?></strong> 입니다.</p>
-            <script>
-                // 아이디 변경 알림창
-                alert('아이디는 ' + '<?php echo $user_id; ?>' + '입니다.');
-                // main.php로 이동
-                window.location.href = 'main.php';
-            </script>
-            <?php endif; ?>
+<div class="container">
+    <h2>Search ID 아이디 찾기</h2>
+    <p>아래 정보를 입력하시면 본인 확인을 거쳐 아이디를 찾아 드립니다.<br><br>옵션을 선택하고 정보를 입력해주세요.</p>
+    
+    <?php if (!empty($error)): ?>
+        <p class="error-message"><?php echo $error; ?></p>
         <form method="POST" action="">
             <div class="form-group">
                 <select id="search_option" name="search_option" onchange="toggleFields()" required>
@@ -175,12 +170,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             <button type="submit">아이디 찾기</button>
         </form>
-    </div>
-    <footer>
-        <p>COPYRIGHT 2019 HYUNDAI AUTOEVER CORP. ALL RIGHTS RESERVED.</p>
-    </footer>
+    <?php elseif (!empty($user_id)): ?>
+        <p class="success-message">등록된 정보에 해당하는 아이디는 <strong><?php echo $user_id; ?></strong> 입니다.</p>
+        <button onclick="location.href='main.php'" style="width: 100%; padding: 10px; background-color: #003399; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;">홈으로 이동</button>
+    <?php else: ?>
+        <form method="POST" action="">
+            <div class="form-group">
+                <select id="search_option" name="search_option" onchange="toggleFields()" required>
+                    <option value="">옵션을 선택하세요</option>
+                    <option value="phone">휴대폰 번호로 찾기</option>
+                    <option value="email">E-mail로 찾기</option>
+                </select>
+            </div>
+            <div class="form-group" id="name-group" style="display: none;">
+                <label for="username">성명</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group" id="phone-group" style="display: none;">
+                <label for="phone_number">휴대폰</label>
+                <input type="text" id="phone_number" name="phone_number">
+                <p class="small-hint">예) 01012345678로 '-' 제외하고 입력</p>
+            </div>
+            <div class="form-group" id="email-group" style="display: none;">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email">
+                <p class="small-hint">예) ***@hyundai.com 등의 형식으로 전체 입력</p>
+            </div>
+            <button type="submit">아이디 찾기</button>
+        </form>
+    <?php endif; ?>
+</div>
 
-    <script>
+<footer>
+    <p>COPYRIGHT 2019 HYUNDAI AUTOEVER CORP. ALL RIGHTS RESERVED.</p>
+</footer>
+
+<script>
     function toggleFields() {
         const searchOption = document.getElementById('search_option').value;
         const groups = document.querySelectorAll('#name-group, #phone-group, #email-group');
