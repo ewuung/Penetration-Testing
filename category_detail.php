@@ -238,7 +238,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <button type="button" onclick="openPopup(<?php echo htmlspecialchars($category['PRO_ID']); ?>)">구매하기</button>
                         <script>
                         function openPopup(category_id) {
-                            var purchase_num = document.getElementById('PU_NUM').value;
+                            var purchase_num = document.getElementById('purchase_num').value;
+                            if (purchase_num <= 0) {
+                                alert("구매 개수를 입력하세요.");
+                                return;
+                            }
                             var url = 'purchase.php?category_id=' + category_id + '&purchase_num=' + purchase_num;
                             var windowName = 'purchasePopup';
                             var windowFeatures = 'width=600,height=400,resizable=yes,scrollbars=yes';
