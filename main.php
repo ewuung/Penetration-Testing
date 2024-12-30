@@ -1,16 +1,13 @@
 <?php
-// 로그인 상태 확인 (예: 세션 사용)
+// 로그인 상태 확인
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    // 로그인하지 않은 경우 로그인 페이지로 리다이렉트
-    header("Location: login.php");
+if (isset($_SESSION['user_id'])) {
+    // 로그인이 되어있는 경우, 로그인 후 페이지(home.php)로 리다이렉트
+    header("Location: home.php");
     exit();
 }
-
-// 사용자 정보 (세션에서 가져오기)
-$user['MEM_ID'] = $_SESSION['user_id'];
-$user['MEM_NAME'] = $_SESSION['username']; // 로그인 시 저장된 사용자 이름
 ?>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -34,13 +31,13 @@ $user['MEM_NAME'] = $_SESSION['username']; // 로그인 시 저장된 사용자 
             font-weight: bold;
             font-size: 20px;
         }
-        .title_main {
+        .title_main{
             font-weight: bold;
             color: #003399;
             font-size: 36px;
             font-family: 'Arial', sans-serif;
         }
-        .title_sub {
+        .title_sub{
             font-weight: normal;
             color:rgb(1, 68, 202);
             font-size: 36px;
@@ -51,7 +48,7 @@ $user['MEM_NAME'] = $_SESSION['username']; // 로그인 시 저장된 사용자 
             margin: 0 auto;
             padding: 20px;
         }
-        .welcome-section {
+        .login-section {
             background-color: #fff;
             border: 1px solid #ddd;
             border-radius: 8px;
@@ -60,22 +57,29 @@ $user['MEM_NAME'] = $_SESSION['username']; // 로그인 시 저장된 사용자 
             text-align: center;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        .welcome-section h2 {
-            margin: 0 0 10px;
-            color: #003399;
-        }
-        .logout-button {
-            background-color: #c0392b;
+        .login-section button {
+            background-color: #003399;
             color: white;
             border: none;
             padding: 10px 20px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
-            margin-top: 10px;
         }
-        .logout-button:hover {
-            background-color: #a93226;
+        .login-section button:hover {
+            background-color: #002266;
+        }
+        .login-links {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .login-links a {
+            color: #003399;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .login-links a:hover {
+            text-decoration: underline;
         }
         .grid {
             display: grid;
@@ -114,6 +118,7 @@ $user['MEM_NAME'] = $_SESSION['username']; // 로그인 시 저장된 사용자 
             color:rgb(190, 210, 252);
             font-weight: bold;
         }
+
         footer {
             background-color: #003399;
             color: white;
@@ -127,20 +132,20 @@ $user['MEM_NAME'] = $_SESSION['username']; // 로그인 시 저장된 사용자 
 <body>
 <header>
     <h1>
-        <a href="home.php" class="title_main" style="text-decoration: none; color: inherit;">
+        <a href="main.php" class="title_main" style="text-decoration: none; color: inherit;">
             <span class="title_main">현대오토에버</span>
         </a>
         <span class="title_sub">VaatzIT</span>
     </h1>
 </header>
     <div class="container">
-        <!-- 사용자 환영 섹션 -->
-        <div class="welcome-section">
-            <h2>환영합니다, <?php echo htmlspecialchars($user['MEM_NAME']); ?>님!</h2>
-            <p>현대오토에버 플랫폼에 로그인하셨습니다.</p>
-            <form action="logout.php" method="post">
-                <button class="logout-button">로그아웃</button>
-            </form>
+        <!-- 로그인 섹션 -->
+        <div class="login-section">
+            <button onclick="location.href='login.php'">로그인</button>
+            <div class="login-links">
+                <a href="find_id.php">ID 찾기</a> | 
+                <a href="find_password.php">비밀번호 찾기</a>
+            </div>
         </div>
         <!-- 메인 콘텐츠 -->
         <div class="grid">
@@ -150,7 +155,7 @@ $user['MEM_NAME'] = $_SESSION['username']; // 로그인 시 저장된 사용자 
             </div>
             <div class="card">
                 <h2>고객담당자 등록</h2>
-                <a href="changeCustomerInfo.php">정보수정</a>
+                <a href="registCustomerUser.php">회원가입</a>
             </div>
             <div class="card">
                 <h2>VaatzIT Mall</h2>

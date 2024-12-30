@@ -1,0 +1,115 @@
+sudo apt update
+sudo apt upgrade -y
+
+sudo apt install openjdk-17-jdk
+java -version
+
+[java -version 명령이 에러가 발생하면 수행]
+#sudo vi /etc/profile
+#	export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64/
+# source /etc/profile
+
+sudo useradd -r -m -U -d /opt/tomcat -s /bin/false tomcat
+
+wget http://mirror.apache-kr.org/apache/tomcat/tomcat-10/v10.1.33/bin/apache-tomcat-10.1.33.tar.gz
+sudo tar -xf apache-tomcat-10.1.33.tar.gz  -C /opt/tomcat/
+sudo mv /opt/tomcat/apache-tomcat-10.1.33 /opt/tomcat/tomcat-10
+
+sudo chown -RH tomcat: /opt/tomcat/tomcat-10
+sudo sh -c 'chmod +x /opt/tomcat/tomcat-10/bin/*.sh'
+sudo ls -al /opt/tomcat/tomcat-10/bin
+
+sudo vi /etc/systemd/system/tomcat.service
+
+[Unit]
+Description=Tomcat 10 servlet container
+After=network.target
+
+[Service]
+Type=forking
+
+User=tomcat
+Group=tomcat
+
+Environment="JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64/"
+Environment="JAVA_OPTS=-Djava.security.egd=file:///dev/urandom -Djava.awt.headless=true"
+
+Environment="CATALINA_BASE=/opt/tomcat/tomcat-10"
+Environment="CATALINA_HOME=/opt/tomcat/tomcat-10"
+Environment="CATALINA_PID=/opt/tomcat/tomcat-10/temp/tomcat.pid"
+Environment="CATALINA_OPTS=-Xms512M -Xmx1024M -server -XX:+UseParallelGC"
+
+ExecStart=/opt/tomcat/tomcat-10/bin/startup.sh
+ExecStop=/opt/tomcat/tomcat-10/bin/shutdown.sh
+
+[Install]
+WantedBy=multi-user.target
+
+
+[로그 설정]
+sudo vi /opt/tomcat/tomcat-10/conf/server.xml
+:set nu
+
+143  <Host name="localhost"  appBase="webapps"
+144             unpackWARs="true" autoDeploy="false" deployOnStartup="false">
+	<!-- context 태그 추가, autoDeploy="false" deployOnStartup="false" -->
+         <Context path="" docBase="boot" > </Context>
+
+         <Valve className="org.apache.catalina.valves.AccessLogValve" directory="log    s"
+                prefix="localhost_access_log" suffix=".txt"
+               pattern="%h %l %u %t &quot;%r&quot; %s %b" />
+
+161       </Host>
+:wq
+
+sudo systemctl daemon-reload
+sudo systemctl start tomcat
+sudo systemctl status tomcat
+sudo systemctl enable tomcat
+
+
+
+[윈도우 CMD]
+example) scp -i "키페어 경로" "출발지 파일경로" "목적지 파일 경로"
+
+scp -i c:\Users\user\.ssh\kyes2411.pem 
+C:\Web\workspace\boot\target\boot-0.0.1-SNAPSHOT.war 
+ubuntu@15.164.165.130:/home/ubuntu
+
+[웹서버]
+ubuntu@ip-172-31-45-127:~$ sudo mv boot-0.0.1-SNAPSHOT.war /opt/tomcat/tomcat-10/webapps/boot.war
+
+ubuntu@ip-172-31-45-127:~$ sudo ls -al /opt/tomcat/tomcat-10/webapps/
+-rw-rw-r--  1 ubuntu ubuntu 44398458 Oct 31 00:31 boot.war
+
+ubuntu@ip-172-31-45-127:~$ sudo systemctl start tomcat
+
+ubuntu@ip-172-31-45-127:~$ sudo systemctl status tomcat
+     Active: active (running) since Thu 2024-10-31 00:37:46 UTC; 12s ago
+
+
+[웹브라우저에서 확인]
+ex) http://웹서버IP:8080/boot
+http://15.164.95.224:8080/boot/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

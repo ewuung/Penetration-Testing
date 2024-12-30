@@ -1,8 +1,8 @@
 <?php
-$host = 'localhost';
-$dbname = 'vaatzit';
-$username = 'root'; // XAMPP 기본 사용자
-$password = ''; // XAMPP 기본 비밀번호 없음
+$host = 'localhost';  // 데이터베이스 호스트
+$dbname = 'jjazztest';  // 데이터베이스 이름
+$username = 'root';  // 사용자 이름
+$password = 'grbhack';  // 사용자 비밀번호
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
@@ -10,5 +10,5 @@ try {
 } catch (PDOException $e) {
     die("Database connection failed: " . $e->getMessage());
 }
-
 ?>
+
