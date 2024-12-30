@@ -6,10 +6,6 @@ if (isset($_SESSION['user_id'])) {
     header("Location: home.php");
     exit();
 }
-
-// 사용자 정보 (세션에서 가져오기)
-$user['MEM_ID'] = $_SESSION['user_id'];
-$user['MEM_NAME'] = $_SESSION['username']; // 로그인 시 저장된 사용자 이름
 ?>
 
 <!DOCTYPE html>
