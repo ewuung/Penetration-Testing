@@ -151,8 +151,8 @@
                 <a href="registCustomerUser.php">회원가입</a>
             </div>
             <div class="card">
-                <h2>사이버 감사실</h2>
-                <a href="#">접속하기</a>
+                <h2>VaatzIT Mall</h2>
+                <a href="VaatIT_Mall.php">접속하기</a>
             </div>
             <div class="card">
                 <h2>4대 실천사항</h2>
