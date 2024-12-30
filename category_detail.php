@@ -217,7 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <header>
         <h1>
-            <a href="VaatzIT_Mall_test.php" style="text-decoration: none; color: inherit;">
+            <a href="VaatzIT_Mall.php" style="text-decoration: none; color: inherit;">
                 <span class="title_main">현대오토에버</span>
               <span class="title_sub">VaatzIT Mall</span>
             </a>  
