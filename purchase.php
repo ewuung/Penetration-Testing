@@ -142,6 +142,8 @@ try {
     <form method="POST">
         <input type="hidden" name="pro_id" value="<?php echo $category_id; ?>">
         <input type="hidden" name="purchase_num" value="<?php echo $purchase_num; ?>">
+        <input type="hidden" name="user_points" value="<?php echo $user['MEM_POINT']; ?>">
+
         <div class="input-section">
             <button type="submit">결제하기</button>
         </div>
