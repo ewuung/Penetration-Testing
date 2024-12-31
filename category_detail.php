@@ -239,17 +239,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <input type="number" id="purchase_num" name="purchase_num" value="1" min="1">
                         <button type="button" onclick="openPopup(<?php echo $category['PRO_ID']; ?>)">구매하기</button>
                         <script>
-                        function openPopup(category_id) {
-                            var purchase_num = document.getElementById('purchase_num').value;
-                            if (purchase_num <= 0) {
-                                alert("구매 개수를 입력하세요.");
-                                return;
+                            function openPopup(category_id) {
+                                var purchase_num = document.getElementById('purchase_num').value;
+                                if (purchase_num <= 0) {
+                                    alert("구매 개수를 입력하세요.");
+                                    return;
+                                }
+                                var user_point = <?php echo $_SESSION['user_points']; ?>;
+                                var url = 'purchase.php?category_id=' + category_id + 
+                                        '&purchase_num=' + purchase_num + 
+                                        '&user_point=' + user_point;
+                                var windowName = 'purchasePopup';
+                                var windowFeatures = 'width=600,height=400,resizable=yes,scrollbars=yes';
+                                window.open(url, windowName, windowFeatures);
                             }
-                            var url = 'purchase.php?category_id=' + category_id + '&purchase_num=' + purchase_num;
-                            var windowName = 'purchasePopup';
-                            var windowFeatures = 'width=600,height=400,resizable=yes,scrollbars=yes';
-                            window.open(url, windowName, windowFeatures);
-                        }
                         </script>
                     </div>
                 </form>       
