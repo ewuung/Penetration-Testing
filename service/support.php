@@ -107,15 +107,15 @@ session_start();
 </head>
 <body>
 <header>
-    <a href="main.php">
+    <a href="../main.php">
         <span class="title_main">현대오토에버</span>
         <span class="title_sub">고객센터</span>
     </a>
 </header>
 <div class="container">
     <div class="sidebar">
-        <button onclick="location.href='notice.php'">공지사항</button>
-        <button onclick="location.href='QnA.php'">FAQ 및 Q&A</button>
+        <button onclick="location.href='./notice/notice.php'">공지사항</button>
+        <button onclick="location.href='./board/QnA.php'">FAQ 및 Q&A</button>
         <button onclick="location.href='member_guide.php'">회원사 가입안내</button>
     </div>
     <div class="content">

@@ -323,10 +323,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['corporate_card_file'
             <div class="menu-item" onclick="showSection('add-customer')">고객사 추가</div>
             <div class="menu-item" onclick="showSection('notice-management')">공지사항 관리</div>
             <div class="menu-item" onclick="showSection('qa-management')">Q&A 관리</div>
+                        <div class="menu-item" onclick="showSection('purchase')">VaatzIT Mall 관리</div>
             <div class="menu-item" onclick="showSection('card-update')">법인카드 신청서 업데이트</div>
         </div>
 
         <div class="content">
+            <!-- 고객사 조회 관리 섹션 -->
             <div id="customer-list">
                 <h2 class="page-title">계정 리스트</h2>
                 <div class="table-container">
@@ -368,7 +370,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['corporate_card_file'
                     </table>
                 </div>
             </div>
-
+            
+            <!-- 고객사 추가 관리 섹션 -->
             <div id="add-customer" style="display: none;">
                 <h2 class="page-title">고객사 추가</h2>
                 <div class="form-container">
@@ -519,6 +522,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['corporate_card_file'
                     <button class="btn btn-edit" onclick="addNotice()">공지사항 추가</button>
                 </div>
             </div>
+
+            <!-- VaatzIT Mall 관리 섹션 -->
+            <div id="purchase" style="display: none;">
+                <h2 class="page-title">VaatzIT Mall 관리</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>상품명</th>
+                                <th>가격</th>
+                                <th>재고</th>
+                                <th>카테고리</th>
+                                <th>작업</th>
+                            </tr>
+                        </thead>
+
+
+                    </table>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-edit" onclick="addProduct()">상품 추가</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -544,6 +572,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['corporate_card_file'
             document.getElementById('add-customer').style.display = 'none';
             document.getElementById('notice-management').style.display = 'none';
             document.getElementById('qa-management').style.display = 'none';
+            document.getElementById('purchase').style.display = 'none';
             document.getElementById('card-update').style.display = 'none';
             document.getElementById(sectionId).style.display = 'block';
             
@@ -600,6 +629,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['corporate_card_file'
 
         function addNotice() {
             window.location.href = 'addNotice.php';
+        }
+
+        function purchase() {
+            window.location.href = 'purchase.php';
+        }
+
+        //user 조회
+        function editUser() {
+            window.location.href = 'editUser.php';
         }
     </script>
 </body>

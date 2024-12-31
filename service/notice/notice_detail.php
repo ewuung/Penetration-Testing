@@ -1,5 +1,5 @@
 <?php
-require 'db.php'; // 데이터베이스 연결
+require '../../db.php'; // 데이터베이스 연결
 
 // 공지사항 ID 확인
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {

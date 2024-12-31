@@ -98,7 +98,7 @@
 <body>
     <header>
         <h1>
-            <span class="title_main" onclick="location.href='main.php'">현대오토에버</span> 
+            <span class="title_main" onclick="location.href='../../main.php'">현대오토에버</span> 
             <span class="title_sub">공지사항</span>
         </h1>
     </header>
@@ -120,7 +120,7 @@
             </thead>
             <tbody>
                 <?php
-                require 'db.php';
+                require '../../db.php';
 
                 // 페이지네이션 설정
                 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;

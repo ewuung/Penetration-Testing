@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         echo "<script>alert('구매가 완료되었습니다.');</script>";
     } catch (PDOException $e) {
-        echo "Database error: " . htmlspecialchars($e->getMessage());
+        echo "Database error: " . $e->getMessage();
         exit;
     }
 }
@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($category['PRO_NAME']); ?> Info</title>
+    <title><?php echo $category['PRO_NAME']; ?> Info</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -233,9 +233,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </header>
     <div class="container">
         <div class="detail">
-            <img src="<?php echo htmlspecialchars($category['PRO_IMG']); ?>" alt="<?php echo htmlspecialchars($category['PRO_NAME']); ?>">
+            <img src="<?php echo $category['PRO_IMG']; ?>" alt="<?php echo $category['PRO_NAME']; ?>">
             <div>
-                <h2>제품 품명: <?php echo htmlspecialchars($category['PRO_NAME']); ?></h2>
+                <h2>제품 품명: <?php echo $category['PRO_NAME']; ?></h2>
                 <h3>제품 가격: <?php echo $category['PRO_COST']; ?></h3>
                 <h3>상세 설명: </h3>
                 <p><?php echo $category['PRO_DESC'] ?? '설명이 없습니다.'; ?></p>

@@ -32,7 +32,6 @@ try {
 }
 ?>
 
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -146,19 +145,19 @@ try {
     </header>
     <div class="container">
         <div class="welcome-section">
-            <h2>환영합니다, <?php echo htmlspecialchars($user['MEM_NAME']); ?>님!</h2>
-            <p>POINT : <?php echo htmlspecialchars($user['MEM_POINT']); ?>점</p>
+            <h2>환영합니다, <?php echo $user['MEM_NAME']; ?>님!</h2>
+            <p>POINT : <?php echo $user['MEM_POINT']; ?>점</p>
         </div>
         <h2>CATEGORY</h2>
         <div class="grid">
         <?php foreach ($categories as $category): ?>
             <div class="card">
-                    <img src="<?php echo htmlspecialchars($category['PRO_IMG']); ?>" alt="<?php echo htmlspecialchars($category['PRO_NAME']); ?>">
-                    <h3><a href="category_detail.php?category_id=<?php echo htmlspecialchars($category['PRO_ID']); ?>">
-                        <?php echo htmlspecialchars($category['PRO_NAME']); ?>
+                    <img src="<?php echo $category['PRO_IMG']; ?>" alt="<?php echo $category['PRO_NAME']; ?>">
+                    <h3><a href="category_detail.php?category_id=<?php echo $category['PRO_ID']; ?>">
+                        <?php echo $category['PRO_NAME']; ?>
                     </a></h3>
                     <h4>
-                        <?php echo htmlspecialchars($category['PRO_COST']); ?>원
+                        <?php echo $category['PRO_COST']; ?>원
                     </h4>
                 </div>
         <?php endforeach; ?>
