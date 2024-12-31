@@ -7,12 +7,11 @@ $user['MEM_ID'] = $_SESSION['user_id'];
 $user['MEM_NAME'] = $_SESSION['username'];
 $user['MEM_POINT'] = $_SESSION['user_points'];
 
-// POST로 전달된 데이터 처리
-$category_id = isset($_POST['category_id']) ? (int)$_POST['category_id'] : 0;
+$category_id = isset($_GET['category_id']) ? (int)$_GET['category_id'] : 0;
 $purchase_num = isset($_POST['purchase_num']) ? (int)$_POST['purchase_num'] : 1;
 
 // 유효한 카테고리인지 확인
-if (!$category_id) {
+if ($category_id <= 0) {
     echo "Invalid category.";
     exit;
 }
