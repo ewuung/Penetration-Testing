@@ -21,8 +21,7 @@ if (!$category_id) {
 try {
     // 데이터베이스에서 제품 정보 가져오기
     $query = "SELECT PRO_ID, PRO_NAME, PRO_COST, PRO_IMG, PRO_DESC FROM PRODUCT WHERE PRO_ID = $category_id";
-    $stmt = $pdo->prepare($query);
-    $stmt->execute([':category_id' => $category_id]);
+    $stmt = $pdo->query($query);  
     $product = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$product) {
@@ -45,37 +44,28 @@ try {
             // 사용자 포인트 업데이트
             $update_query = "UPDATE MEMBERS SET MEM_POINT = $remaining_points WHERE MEM_ID = {$user['MEM_ID']}";
             $pdo->exec($update_query);            
-            $stmt->execute([
-                ':remaining_points' => $remaining_points,
-                ':user_id' => $user['MEM_ID'],
-            ]);
 
             // 세션 값 갱신
             $_SESSION['user_points'] = $remaining_points;
 
-            // 구매 기록 저장 (선택 사항)
+            // 구매 기록 저장 
             $purchase_date = date('Y-m-d H:i:s');
             $purchase_query = "INSERT INTO PURCHASE (PU_ID, PU_NUM, PU_DATE) VALUES ({$user['MEM_ID']}, $purchase_num, '$purchase_date')";
             $pdo->exec($purchase_query);            
-            $stmt->execute([
-                ':user_id' => $user['MEM_ID'],
-                ':purchase_num' => $purchase_num,
-                ':purchase_date' => $purchase_date,
-            ]);
 
             $message = "결제가 완료되었습니다. 잔여 포인트: " . number_format($remaining_points) . "원";
         } else {
             $message = "포인트가 부족합니다.";
         }
 
-        echo "<script>alert('" . htmlspecialchars($message, ENT_QUOTES) . "'); window.location.href='" . $_SERVER['PHP_SELF'] . "?category_id=$category_id&purchase_num=$purchase_num';</script>";
+        echo "<script>alert('" . $message, ENT_QUOTES . "'); window.location.href='" . $_SERVER['PHP_SELF'] . "?category_id=$category_id&purchase_num=$purchase_num';</script>";
         exit;
     }
 
     // 결제 후 예상 포인트 계산
     $expected_points = $user_point - $total_price;
 } catch (PDOException $e) {
-    echo "Database error: " . htmlspecialchars($e->getMessage());
+    echo "Database error: " . $e->getMessage();
     exit;
 }
 ?>
