@@ -14,7 +14,8 @@ $user['MEM_NAME'] = $_SESSION['username'];
 
 // Fetch user points from MEMBERS table
 try {
-    $query = "SELECT MEM_POINT FROM MEMBERS WHERE MEM_ID = '" . $pdo->quote($user['MEM_ID']) . "'";
+    $user['MEM_ID'] = $pdo->quote($user['MEM_ID']);
+    $query = "SELECT MEM_POINT FROM MEMBERS WHERE MEM_ID = " . $user['MEM_ID'];
     $result = $pdo->query($query);
     $user['MEM_POINT'] = $result->fetchColumn();
 } catch (PDOException $e) {
