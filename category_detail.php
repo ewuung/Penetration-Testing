@@ -25,7 +25,8 @@ try {
     $category = $result->fetch(PDO::FETCH_ASSOC);
 
     // 사용자 포인트 가져오기
-    $query = "SELECT MEM_POINT FROM MEMBERS WHERE MEM_ID = '" . $pdo->quote($user['MEM_ID']) . "'";
+    $user_id = $pdo->quote($user['MEM_ID']);
+    $query = "SELECT MEM_POINT FROM MEMBERS WHERE MEM_ID = $user_id";
     $result = $pdo->query($query);
     $user_points = (int)$result->fetchColumn();
 
