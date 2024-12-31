@@ -19,15 +19,15 @@ $category_id = isset($_GET['category_id']) ? (int)$_GET['category_id'] : 0;
 
 // Fetch category details from database
 try {
-    $stmt = $pdo->prepare("SELECT PRO_ID, PRO_NAME, PRO_COST, PRO_IMG, PRO_DESC FROM PRODUCT WHERE PRO_ID = :category_id");
-    $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
-    $stmt->execute();
-    $category = $stmt->fetch(PDO::FETCH_ASSOC);
+    // 제품 정보 가져오기
+    $query = "SELECT PRO_ID, PRO_NAME, PRO_COST, PRO_IMG, PRO_DESC FROM PRODUCT WHERE PRO_ID = $category_id";
+    $result = $pdo->query($query);
+    $category = $result->fetch(PDO::FETCH_ASSOC);
 
-    $stmt = $pdo->prepare("SELECT MEM_POINT FROM MEMBERS WHERE MEM_ID = :mem_id");
-    $stmt->bindParam(':mem_id', $user['MEM_ID'], PDO::PARAM_STR);
-    $stmt->execute();
-    $user_points = (int)$stmt->fetchColumn();
+    // 사용자 포인트 가져오기
+    $query = "SELECT MEM_POINT FROM MEMBERS WHERE MEM_ID = '" . $pdo->quote($user['MEM_ID']) . "'";
+    $result = $pdo->query($query);
+    $user_points = (int)$result->fetchColumn();
 
     $user['MEM_POINT'] = $user_points;
 
@@ -56,17 +56,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         // Insert purchase into PURCHASE table
-        $stmt = $pdo->prepare("INSERT INTO PURCHASE (PU_ID, PU_NUM, PU_DATE) VALUES (:user_id, :purchase_num, :purchase_date)");
-        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_STR);
-        $stmt->bindParam(':purchase_num', $purchase_num, PDO::PARAM_INT);
-        $stmt->bindParam(':purchase_date', $purchase_date, PDO::PARAM_STR);
-        $stmt->execute();
-
+        $query = "INSERT INTO PURCHASE (PU_ID, PU_NUM, PU_DATE) VALUES ('$user_id', $purchase_num, '$purchase_date')";
+        $pdo->query($query);
+    
         echo "<script>alert('구매가 완료되었습니다.');</script>";
     } catch (PDOException $e) {
         echo "Database error: " . $e->getMessage();
         exit;
     }
+    
 }
 ?>
 
@@ -239,9 +237,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h3>제품 가격: <?php echo $category['PRO_COST']; ?></h3>
                 <h3>상세 설명: </h3>
                 <p><?php echo $category['PRO_DESC'] ?? '설명이 없습니다.'; ?></p>
-                <form method="POST">
-                    <input type="hidden" name="pro_id" value="<?php echo $category_id; ?>">                 
-                 <div class="input-section">
+                <form method="POST" action="purchase.php">
+                    <input type="hidden" name="pro_id" value="<?php echo $category_id; ?>">
+                    <input type="hidden" name="user_point" value="<?php echo $user['MEM_POINT']; ?>">
+                    <input type="hidden" name="pro_cost" value="<?php echo $category['PRO_COST']; ?>">               
+                    <div class="input-section">
                         <label for="purchase_num">구매 개수:</label>
                         <input type="number" id="purchase_num" name="purchase_num" value="1" min="1">
                         <button type="button" onclick="openPopup(<?php echo $category['PRO_ID']; ?>)">구매하기</button>
@@ -262,10 +262,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </form>       
             </div>
         </div>
-        <form method="POST">
-        <input type="hidden" name="pro_id" value="<?php echo $category_id; ?>">
-        <input type="hidden" name="purchase_num" value="<?php echo $purchase_num; ?>">
-        <input type="hidden" name="user_points" value="<?php echo $user['MEM_POINT']; ?>">
     </div>
     <footer>
         <p>COPYRIGHT 2019 HYUNDAI AUTOEVER CORP. ALL RIGHTS RESERVED.</p>

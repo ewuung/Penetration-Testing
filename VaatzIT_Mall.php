@@ -14,19 +14,19 @@ $user['MEM_NAME'] = $_SESSION['username'];
 
 // Fetch user points from MEMBERS table
 try {
-    $stmt = $pdo->prepare("SELECT MEM_POINT FROM MEMBERS WHERE MEM_ID = :mem_id");
-    $stmt->bindParam(':mem_id', $user['MEM_ID'], PDO::PARAM_STR);
-    $stmt->execute();
-    $user['MEM_POINT'] = $stmt->fetchColumn();
+    $query = "SELECT MEM_POINT FROM MEMBERS WHERE MEM_ID = '" . $pdo->quote($user['MEM_ID']) . "'";
+    $result = $pdo->query($query);
+    $user['MEM_POINT'] = $result->fetchColumn();
 } catch (PDOException $e) {
     die("Error fetching user points: " . $e->getMessage());
 }
 
+
 // Fetch categories for display
 try {
-    $stmt = $pdo->prepare("SELECT PRO_ID, PRO_NAME, PRO_COST, PRO_IMG FROM PRODUCT");
-    $stmt->execute();
-    $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $query = "SELECT PRO_ID, PRO_NAME, PRO_COST, PRO_IMG FROM PRODUCT";
+    $result = $pdo->query($query);
+    $categories = $result->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     die("Error fetching categories: " . $e->getMessage());
 }
@@ -147,6 +147,7 @@ try {
         <div class="welcome-section">
             <h2>환영합니다, <?php echo $user['MEM_NAME']; ?>님!</h2>
             <p>POINT : <?php echo $user['MEM_POINT']; ?>점</p>
+            <input type="hidden" id="user_point" value="<?php echo $user['MEM_POINT']; ?>">
         </div>
         <h2>CATEGORY</h2>
         <div class="grid">
