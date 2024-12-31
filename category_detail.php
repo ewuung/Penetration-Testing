@@ -232,27 +232,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p><?php echo $category['PRO_DESC'] ?? '설명이 없습니다.'; ?></p>
                 <form method="POST" action="purchase.php"> 
                     <input type="hidden" name="category_id" value="<?php echo $category_id; ?>">
-                    <input type="hidden" name="user_point" value="<?php echo $_SESSION['user_points']; ?>">
+                    <input type="hidden" name="user_point" value="<?php echo $_SESSION['user_point']; ?>">
                     <input type="hidden" name="pro_cost" value="<?php echo $category['PRO_COST']; ?>">              
                     <div class="input-section">
                         <label for="purchase_num">구매 개수:</label>
                         <input type="number" id="purchase_num" name="purchase_num" value="1" min="1">
                         <button type="button" onclick="openPopup(<?php echo $category['PRO_ID']; ?>)">구매하기</button>
                         <script>
-                            function openPopup(category_id) {
-                                var purchase_num = document.getElementById('purchase_num').value;
-                                if (purchase_num <= 0) {
-                                    alert("구매 개수를 입력하세요.");
-                                    return;
-                                }
-                                var user_point = <?php echo $_SESSION['user_points']; ?>;
-                                var url = 'purchase.php?category_id=' + category_id + 
-                                        '&purchase_num=' + purchase_num + 
-                                        '&user_point=' + user_point;
-                                var windowName = 'purchasePopup';
-                                var windowFeatures = 'width=600,height=400,resizable=yes,scrollbars=yes';
-                                window.open(url, windowName, windowFeatures);
+                        function openPopup(category_id) {
+                            var purchase_num = document.getElementById('purchase_num').value;
+                            if (purchase_num <= 0) {
+                                alert("구매 개수를 입력하세요.");
+                                return;
                             }
+                            var user_point = document.getElementsByName('user_point')[0].value;
+                            var url = 'purchase.php?category_id=' + category_id + 
+                                    '&purchase_num=' + purchase_num + 
+                                    '&user_point=' + user_point;
+                            var windowName = 'purchasePopup';
+                            var windowFeatures = 'width=600,height=400,resizable=yes,scrollbars=yes';
+                            window.open(url, windowName, windowFeatures);
+                        }
                         </script>
                     </div>
                 </form>       
