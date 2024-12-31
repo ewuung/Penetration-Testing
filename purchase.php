@@ -22,7 +22,7 @@ if (!$category_id) {
 
 try {
     // 데이터베이스에서 제품 정보 가져오기
-    $query = "SELECT PRO_ID, PRO_NAME, PRO_COST, PRO_IMG, PRO_DESC FROM PRODUCT WHERE PRO_ID = :category_id";
+    $query = "SELECT PRO_ID, PRO_NAME, PRO_COST, PRO_IMG, PRO_DESC FROM PRODUCT WHERE PRO_ID = $category_id";
     $stmt = $pdo->prepare($query);
     $stmt->execute([':category_id' => $category_id]);
     $product = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -45,8 +45,8 @@ try {
             $remaining_points = $user_point - $total_price;
 
             // 사용자 포인트 업데이트
-            $update_query = "UPDATE MEMBERS SET MEM_POINT = :remaining_points WHERE MEM_ID = :user_id";
-            $stmt = $pdo->prepare($update_query);
+            $update_query = "UPDATE MEMBERS SET MEM_POINT = $remaining_points WHERE MEM_ID = {$user['MEM_ID']}";
+            $pdo->exec($update_query);            
             $stmt->execute([
                 ':remaining_points' => $remaining_points,
                 ':user_id' => $user['MEM_ID'],
@@ -57,8 +57,8 @@ try {
 
             // 구매 기록 저장 (선택 사항)
             $purchase_date = date('Y-m-d H:i:s');
-            $purchase_query = "INSERT INTO PURCHASE (PU_ID, PU_NUM, PU_DATE) VALUES (:user_id, :purchase_num, :purchase_date)";
-            $stmt = $pdo->prepare($purchase_query);
+            $purchase_query = "INSERT INTO PURCHASE (PU_ID, PU_NUM, PU_DATE) VALUES ({$user['MEM_ID']}, $purchase_num, '$purchase_date')";
+            $pdo->exec($purchase_query);            
             $stmt->execute([
                 ':user_id' => $user['MEM_ID'],
                 ':purchase_num' => $purchase_num,
