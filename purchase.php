@@ -1,14 +1,22 @@
 <?php
 session_start();
-require 'db.php'; // 데이터베이스 연결 파일 포함
+require 'db.php';
 
 // 세션에서 사용자 정보 가져오기
 $user['MEM_ID'] = $_SESSION['user_id'];
 $user['MEM_NAME'] = $_SESSION['username'];
-$user_point = isset($_POST['user_point']) ? (int)$_POST['user_point'] : $_SESSION['user_point'];
+
+// 포인트 값을 GET이나 POST 파라미터에서 가져오기
+$user_point = 0;
+if (isset($_GET['user_point'])) {
+    $user_point = (int)$_GET['user_point'];
+} elseif (isset($_POST['user_point'])) {
+    $user_point = (int)$_POST['user_point'];
+} else {
+    $user_point = $_SESSION['user_point'];
+}
 
 $category_id = isset($_GET['category_id']) ? (int)$_GET['category_id'] : 0;
-$purchase_num = isset($_POST['purchase_num']) ? (int)$_POST['purchase_num'] : 1;
 $purchase_num = isset($_GET['purchase_num']) ? (int)$_GET['purchase_num'] : 1;
 
 // 유효한 카테고리인지 확인
