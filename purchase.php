@@ -5,11 +5,11 @@ require 'db.php'; // 데이터베이스 연결 파일 포함
 // 세션에서 사용자 정보 가져오기
 $user['MEM_ID'] = $_SESSION['user_id'];
 $user['MEM_NAME'] = $_SESSION['username'];
-// 클라이언트에서 전달받은 포인트 값을 사용 (세션 값으로 대체)
-$user['MEM_POINT'] = isset($_POST['user_point']) ? (int)$_POST['user_point'] : $_SESSION['user_points'];
+$user_point = isset($_POST['user_point']) ? (int)$_POST['user_point'] : $_SESSION['user_point'];
 
 $category_id = isset($_GET['category_id']) ? (int)$_GET['category_id'] : 0;
 $purchase_num = isset($_POST['purchase_num']) ? (int)$_POST['purchase_num'] : 1;
+$purchase_num = isset($_GET['purchase_num']) ? (int)$_GET['purchase_num'] : 1;
 
 // 유효한 카테고리인지 확인
 if ($category_id <= 0) {
@@ -35,11 +35,17 @@ try {
     // 총 비용 계산
     $total_price = $purchase_num * $pro_cost;
 
-    // 결제 처리
+    // 결제 처리 부분
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if ($user['MEM_POINT'] >= $total_price) {
-            $remaining_points = $user['MEM_POINT'] - $total_price;
-            $_SESSION['user_points'] = $remaining_points;
+        if ($user_point >= $total_price) {  // 세션에서 받은 포인트 변수 사용
+            $remaining_points = $user_point - $total_price;
+            
+            // 세션에 남은 포인트를 저장
+            $_SESSION['user_point'] = $remaining_points;
+            
+            // 사용자 포인트를 DB에 업데이트 (prepare 없이 직접 쿼리 실행)
+            $update_query = "UPDATE USERS SET MEM_POINT = $remaining_points WHERE MEM_ID = {$user['MEM_ID']}";
+            $pdo->exec($update_query); // exec()를 사용하여 쿼리 실행
         
             // 구매 기록 DB에 저장
             $purchase_date = date('Y-m-d H:i:s');
@@ -50,12 +56,10 @@ try {
         } else {
             $message = "포인트가 부족합니다.";
         }
-        
     
         echo "<script>alert('" . $message . "'); window.location.href='" . $_SERVER['PHP_SELF'] . "?category_id=$category_id&purchase_num=$purchase_num';</script>";
         exit;
-    }
-    
+    }    
 
     // 결제 후 예상 포인트 계산
     $expected_points = $user_point - $total_price;

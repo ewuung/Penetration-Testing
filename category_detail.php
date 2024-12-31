@@ -14,7 +14,7 @@ if (!isset($_SESSION['user_id'])) {
 $user['MEM_ID'] = $_SESSION['user_id'];
 $user['MEM_NAME'] = $_SESSION['username'];
 
-// Get category_id from URL parameter
+$user_point = isset($_GET['user_point']) ? $_GET['user_point'] : 0;
 $category_id = isset($_GET['category_id']) ? (int)$_GET['category_id'] : 0;
 
 // Fetch category details from database
@@ -23,14 +23,6 @@ try {
     $query = "SELECT PRO_ID, PRO_NAME, PRO_COST, PRO_IMG, PRO_DESC FROM PRODUCT WHERE PRO_ID = $category_id";
     $result = $pdo->query($query);
     $category = $result->fetch(PDO::FETCH_ASSOC);
-
-    // 사용자 포인트 가져오기
-    $user_id = $pdo->quote($user['MEM_ID']);
-    $query = "SELECT MEM_POINT FROM MEMBERS WHERE MEM_ID = $user_id";
-    $result = $pdo->query($query);
-    $user_points = (int)$result->fetchColumn();
-
-    $user['MEM_POINT'] = $user_points;
 
 } catch (PDOException $e) {
     echo "Database error: " . $e->getMessage();
