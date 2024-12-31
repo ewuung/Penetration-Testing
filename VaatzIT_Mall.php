@@ -155,7 +155,7 @@ try {
         <?php foreach ($categories as $category): ?>
             <div class="card">
                     <img src="<?php echo $category['PRO_IMG']; ?>" alt="<?php echo $category['PRO_NAME']; ?>">
-                    <h3><a href="category_detail.php?category_id=<?php echo $category['PRO_ID']; ?>">
+                    <h3><a href="category_detail.php?category_id=<?php echo $category['PRO_ID']; ?>&user_point=<?php echo $user['MEM_POINT']; ?>">
                         <?php echo $category['PRO_NAME']; ?>
                     </a></h3>
                     <h4>
