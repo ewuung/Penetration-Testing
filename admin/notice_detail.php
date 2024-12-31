@@ -1,5 +1,5 @@
 <?php
-require 'db.php';
+require '../db.php';
 
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     die('잘못된 접근입니다.');

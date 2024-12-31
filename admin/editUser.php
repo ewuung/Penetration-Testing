@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'db.php';
+require_once '../db.php';
 
 // Fetch user data if ID is provided
 if (isset($_GET['id'])) {
@@ -14,12 +14,12 @@ if (isset($_GET['id'])) {
     if (!$user) {
         echo "<script>
                 alert('사용자를 찾을 수 없습니다.');
-                window.location.href = 'admin_board.php';
+                window.location.href = 'board.php';
               </script>";
         exit();
     }
 } else {
-    header("Location: admin_board.php");
+    header("Location: board.php");
     exit();
 }
 ?>
@@ -99,7 +99,7 @@ if (isset($_GET['id'])) {
 <body>
     <div class="container">
         <h2>사용자 정보 수정</h2>
-        <form method="POST" action="admin_board.php">
+        <form method="POST" action="board.php">
             <input type="hidden" name="id" value="<?php echo $user['id']; ?>">
             <input type="hidden" name="update" value="1">
             
@@ -140,7 +140,7 @@ if (isset($_GET['id'])) {
             
             <div class="btn-container">
                 <button type="submit" class="btn btn-primary">저장</button>
-                <button type="button" class="btn btn-secondary" onclick="window.location.href='admin_board.php'">취소</button>
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='admin/board.php'">취소</button>
             </div>
         </form>
     </div>

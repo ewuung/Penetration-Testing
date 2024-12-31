@@ -1,41 +1,41 @@
 <?php
-require 'db.php';
+require '../db.php';
 
-// 공지사항 추가 처리
+// 공지사항 ID 확인
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    die("잘못된 접근입니다.");
+}
+
+$id = (int)$_GET['id'];
+
+// 공지사항 조회
+try {
+    $stmt = $pdo->prepare("SELECT * FROM notice WHERE id = ?");
+    $stmt->execute([$id]);
+    $notice = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$notice) {
+        die("공지사항이 존재하지 않습니다.");
+    }
+} catch (PDOException $e) {
+    die("오류 발생: " . $e->getMessage());
+}
+
+// 수정 처리
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = trim($_POST['title']);
     $content = trim($_POST['content']);
-    $file_path = null;
 
     if (empty($title) || empty($content)) {
         $error_message = "제목과 내용을 모두 입력해주세요.";
     } else {
-        // 첨부파일 처리
-        if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] === UPLOAD_ERR_OK) {
-            $upload_dir = 'notice_uploads/';
-            if (!is_dir($upload_dir)) {
-                mkdir($upload_dir, 0777, true);
-            }
-
-            $file_name = basename($_FILES['attachment']['name']);
-            $target_path = $upload_dir . time() . '_' . $file_name;
-
-            if (move_uploaded_file($_FILES['attachment']['tmp_name'], $target_path)) {
-                $file_path = $target_path;
-            } else {
-                $error_message = "파일 업로드 중 오류가 발생했습니다.";
-            }
-        }
-
-        if (empty($error_message)) {
-            try {
-                $stmt = $pdo->prepare("INSERT INTO notice (title, content, file_path, created_at) VALUES (?, ?, ?, NOW())");
-                $stmt->execute([$title, $content, $file_path]);
-                header("Location: admin_board.php");
-                exit;
-            } catch (PDOException $e) {
-                $error_message = "오류 발생: " . $e->getMessage();
-            }
+        try {
+            $stmt = $pdo->prepare("UPDATE notice SET title = ?, content = ?, updated_at = NOW() WHERE id = ?");
+            $stmt->execute([$title, $content, $id]);
+            header("Location: board.php");
+            exit;
+        } catch (PDOException $e) {
+            $error_message = "오류 발생: " . $e->getMessage();
         }
     }
 }
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>공지사항 추가</title>
+    <title>공지사항 수정</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -108,21 +108,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <div class="form-container">
-        <h1>공지사항 추가</h1>
+        <h1>공지사항 수정</h1>
         <?php if (!empty($error_message)): ?>
             <p class="error-message"><?= htmlspecialchars($error_message) ?></p>
         <?php endif; ?>
-        <form method="POST" enctype="multipart/form-data">
+        <form method="POST">
             <label for="title">제목</label>
-            <input type="text" id="title" name="title" required>
+            <input type="text" id="title" name="title" value="<?= htmlspecialchars($notice['title']) ?>" required>
 
             <label for="content">내용</label>
-            <textarea id="content" name="content" rows="8" required></textarea>
+            <textarea id="content" name="content" rows="8" required><?= htmlspecialchars($notice['content']) ?></textarea>
 
-            <label for="attachment">첨부파일</label>
-            <input type="file" id="attachment" name="attachment" accept=".pdf,.doc,.docx,.jpg,.png,.zip">
-
-            <button type="submit">등록</button>
+            <button type="submit">수정</button>
         </form>
     </div>
 </body>

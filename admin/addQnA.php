@@ -1,5 +1,5 @@
 <?php
-require 'db.php';
+require '../db.php';
 
 // Q&A 추가 처리
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
                 ");
                 $stmt->execute([$title, $content, $MEM_ID, $email, $phone, $is_private, $password, $file_path]);
-                header("Location: admin_board.php");
+                header("Location: board.php");
                 exit;
             } catch (PDOException $e) {
                 $error_message = "오류 발생: " . $e->getMessage();
