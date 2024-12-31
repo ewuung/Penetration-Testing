@@ -2,75 +2,82 @@
 session_start();
 require 'db.php'; // 데이터베이스 연결 파일 포함
 
-// 사용자 세션 체크
-if (!isset($_SESSION['user_id'])) {
-    echo "로그인이 필요합니다.";
-    exit;
-}
-
+// 세션에서 사용자 정보 가져오기
 $user['MEM_ID'] = $_SESSION['user_id'];
 $user['MEM_NAME'] = $_SESSION['username'];
+$user['MEM_POINT'] = $_SESSION['user_points'];
+
+// POST로 전달된 데이터 처리
+$pro_id = isset($_POST['pro_id']) ? (int)$_POST['pro_id'] : 0;
+$purchase_num = isset($_POST['purchase_num']) ? (int)$_POST['purchase_num'] : 1;
 
 // GET으로 전달된 데이터 처리
-$pro_id = isset($_GET['pro_id']) ? (int)$_GET['pro_id'] : 0;
-$purchase_num = isset($_GET['purchase_num']) ? (int)$_GET['purchase_num'] : 1;
-$user_points = isset($_GET['user_points']) ? (int)$_GET['user_points'] : 0;
+$category_id = isset($_POST['pro_id']) ? (int)$_POST['pro_id'] : (isset($_GET['category_id']) ? (int)$_GET['category_id'] : 0);
 
 // 유효한 카테고리인지 확인
-if (!$pro_id) {
-    echo "잘못된 제품입니다.";
+if (!$category_id) {
+    echo "Invalid category.";
     exit;
 }
 
 try {
     // 데이터베이스에서 제품 정보 가져오기
-    $stmt = $pdo->prepare("SELECT PRO_ID, PRO_NAME, PRO_COST, PRO_IMG, PRO_DESC FROM PRODUCT WHERE PRO_ID = :pro_id");
-    $stmt->bindParam(':pro_id', $pro_id, PDO::PARAM_INT);
-    $stmt->execute();
+    $query = "SELECT PRO_ID, PRO_NAME, PRO_COST, PRO_IMG, PRO_DESC FROM PRODUCT WHERE PRO_ID = :category_id";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([':category_id' => $category_id]);
     $product = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$product) {
-        echo "제품을 찾을 수 없습니다.";
+        echo "Product not found.";
         exit;
     }
 
-    // 사용자 포인트 가져오기
-    $stmt = $pdo->prepare("SELECT MEM_POINT FROM MEMBERS WHERE MEM_ID = :mem_id");
-    $stmt->bindParam(':mem_id', $user['MEM_ID'], PDO::PARAM_STR);
-    $stmt->execute();
-    $user_points = (int)$stmt->fetchColumn();
+    // 클라이언트에서 전달받은 값 가져오기
+    $user_point = isset($_POST['user_point']) ? (int)$_POST['user_point'] : $user['MEM_POINT'];
+    $pro_cost = (int)$product['PRO_COST'];
 
-    $user['MEM_POINT'] = $user_points;
+    // 총 비용 계산
+    $total_price = $purchase_num * $pro_cost;
 
-    // 총 가격 계산
-    $total_price = (int)$product['PRO_COST'] * $purchase_num;
+    // 결제 처리
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($user_point >= $total_price) {
+            $remaining_points = $user_point - $total_price;
 
-    // 결제 후 예상 포인트 계산
-    $expected_points = $user_points - $total_price;
-} catch (PDOException $e) {
-    echo "데이터베이스 오류: " . htmlspecialchars($e->getMessage());
-    exit;
-}
+            // 사용자 포인트 업데이트
+            $update_query = "UPDATE MEMBERS SET MEM_POINT = :remaining_points WHERE MEM_ID = :user_id";
+            $stmt = $pdo->prepare($update_query);
+            $stmt->execute([
+                ':remaining_points' => $remaining_points,
+                ':user_id' => $user['MEM_ID'],
+            ]);
 
-// 결제 처리
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if ($user_points >= $total_price) {
-        $new_points = $user_points - $total_price;
+            // 세션 값 갱신
+            $_SESSION['user_points'] = $remaining_points;
 
-        // 사용자 포인트 업데이트
-        $stmt = $pdo->prepare("UPDATE MEMBERS SET MEM_POINT = :new_points WHERE MEM_ID = :mem_id");
-        $stmt->bindParam(':new_points', $new_points, PDO::PARAM_INT);
-        $stmt->bindParam(':mem_id', $user['MEM_ID'], PDO::PARAM_STR);
-        $stmt->execute();
+            // 구매 기록 저장 (선택 사항)
+            $purchase_date = date('Y-m-d H:i:s');
+            $purchase_query = "INSERT INTO PURCHASE (PU_ID, PU_NUM, PU_DATE) VALUES (:user_id, :purchase_num, :purchase_date)";
+            $stmt = $pdo->prepare($purchase_query);
+            $stmt->execute([
+                ':user_id' => $user['MEM_ID'],
+                ':purchase_num' => $purchase_num,
+                ':purchase_date' => $purchase_date,
+            ]);
 
-        $_SESSION['user_points'] = $new_points; // 세션 업데이트
+            $message = "결제가 완료되었습니다. 잔여 포인트: " . number_format($remaining_points) . "원";
+        } else {
+            $message = "포인트가 부족합니다.";
+        }
 
-        $message = "결제가 완료되었습니다. 잔여 포인트: " . number_format($new_points) . "원";
-    } else {
-        $message = "포인트가 부족합니다.";
+        echo "<script>alert('" . htmlspecialchars($message, ENT_QUOTES) . "'); window.location.href='" . $_SERVER['PHP_SELF'] . "?category_id=$category_id&purchase_num=$purchase_num';</script>";
+        exit;
     }
 
-    echo "<script>alert('$message'); window.location.href='purchase.php?pro_id=$pro_id&purchase_num=$purchase_num&user_points=$new_points';</script>";
+    // 결제 후 예상 포인트 계산
+    $expected_points = $user_point - $total_price;
+} catch (PDOException $e) {
+    echo "Database error: " . htmlspecialchars($e->getMessage());
     exit;
 }
 ?>
@@ -136,16 +143,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 <div class="container">
     <h2>구매 내역</h2>
-    <p><strong>제품명:</strong> <?php echo $product['PRO_NAME']; ?></p>
+    <p><strong>제품명:</strong> <?php echo htmlspecialchars($product['PRO_NAME'], ENT_QUOTES); ?></p>
     <p><strong>구매 수량:</strong> <?php echo $purchase_num; ?></p>
     <p><strong>총 가격:</strong> <?php echo number_format($total_price); ?> 원</p>
-    <p><strong>현재 내 포인트:</strong> <?php echo number_format($user['MEM_POINT']); ?> 원</p>
+    <p><strong>현재 내 포인트:</strong> <?php echo number_format($user_point); ?> 원</p>
     <p><strong>결제 후 예상 포인트:</strong> <?php echo number_format($expected_points); ?> 원</p>
 
     <form method="POST">
-        <input type="hidden" name="pro_id" value="<?php echo $pro_id; ?>">
+        <input type="hidden" name="pro_id" value="<?php echo $category_id; ?>">
         <input type="hidden" name="purchase_num" value="<?php echo $purchase_num; ?>">
-        <input type="hidden" name="user_points" value="<?php echo $user['MEM_POINT']; ?>">
+        <input type="hidden" name="user_point" value="<?php echo $user_point; ?>">
 
         <div class="input-section">
             <button type="submit">결제하기</button>
