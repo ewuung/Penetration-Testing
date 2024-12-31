@@ -10,17 +10,14 @@ $pro_id = isset($_POST['pro_id']) ? (int)$_POST['pro_id'] : 0;
 $purchase_num = isset($_POST['purchase_num']) ? (int)$_POST['purchase_num'] : 1;
 
 // GET으로 전달된 데이터 처리
-$category_id = isset($_GET['category_id']) ? (int)$_GET['category_id'] : 0;
+$category_id = isset($_POST['pro_id']) ? (int)$_POST['pro_id'] : (isset($_GET['category_id']) ? (int)$_GET['category_id'] : 0);
 $purchase_num = isset($_GET['purchase_num']) ? (int)$_GET['purchase_num'] : 1;
 
 // 유효한 카테고리인지 확인
-if (!$category_id || !isset($categories[$category_id - 1])) {
+if (!$category_id) {
     echo "Invalid category.";
     exit;
 }
-
-// 선택된 제품 정보 가져오기
-$product = $categories[$category_id - 1];
 
 try {
     // 데이터베이스에서 제품 정보 가져오기
@@ -47,7 +44,10 @@ try {
 
     // 결제 후 예상 포인트 계산
     $expected_points = $user_points - $total_price;
-
+} catch (PDOException $e) {
+    echo "Database error: " . htmlspecialchars($e->getMessage());
+    exit;
+}
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // 결제 처리
         if ($user_points >= $total_price) {
@@ -69,10 +69,6 @@ try {
         echo "<script>alert('" . htmlspecialchars($message, ENT_QUOTES) . "'); window.location.href='" . $_SERVER['PHP_SELF'] . "?category_id=$category_id&purchase_num=$purchase_num';</script>";
         exit;
     }
-} catch (PDOException $e) {
-    echo "Database error: " . htmlspecialchars($e->getMessage());
-    exit;
-}
 
 ?>
 
