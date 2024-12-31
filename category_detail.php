@@ -240,9 +240,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h3>상세 설명: </h3>
                 <p><?php echo $category['PRO_DESC'] ?? '설명이 없습니다.'; ?></p>
                 <form method="POST">
-                    <input type="hidden" name="pro_id" value="<?php echo $category_id; ?>">
-                    <input type="hidden" name="purchase_num" value="<?php echo $purchase_num; ?>">
-                    <input type="hidden" name="user_points" value="<?php echo $user['MEM_POINT']; ?>">                    
+                    <input type="hidden" name="pro_id" value="<?php echo $category_id; ?>">                 
                  <div class="input-section">
                         <label for="purchase_num">구매 개수:</label>
                         <input type="number" id="purchase_num" name="purchase_num" value="1" min="1">
@@ -264,6 +262,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </form>       
             </div>
         </div>
+        <form method="POST">
+        <input type="hidden" name="pro_id" value="<?php echo $category_id; ?>">
+        <input type="hidden" name="purchase_num" value="<?php echo $purchase_num; ?>">
+        <input type="hidden" name="user_points" value="<?php echo $user['MEM_POINT']; ?>">
     </div>
     <footer>
         <p>COPYRIGHT 2019 HYUNDAI AUTOEVER CORP. ALL RIGHTS RESERVED.</p>
