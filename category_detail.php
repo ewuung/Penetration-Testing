@@ -23,8 +23,16 @@ try {
     $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
     $stmt->execute();
     $category = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $stmt = $pdo->prepare("SELECT MEM_POINT FROM MEMBERS WHERE MEM_ID = :mem_id");
+    $stmt->bindParam(':mem_id', $user['MEM_ID'], PDO::PARAM_STR);
+    $stmt->execute();
+    $user_points = (int)$stmt->fetchColumn();
+
+    $user['MEM_POINT'] = $user_points;
+
 } catch (PDOException $e) {
-    echo "Database error: " . htmlspecialchars($e->getMessage());
+    echo "Database error: " . $e->getMessage();
     exit;
 }
 
@@ -228,14 +236,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <img src="<?php echo htmlspecialchars($category['PRO_IMG']); ?>" alt="<?php echo htmlspecialchars($category['PRO_NAME']); ?>">
             <div>
                 <h2>제품 품명: <?php echo htmlspecialchars($category['PRO_NAME']); ?></h2>
-                <h3>제품 가격: <?php echo htmlspecialchars($category['PRO_COST']); ?></h3>
+                <h3>제품 가격: <?php echo $category['PRO_COST']; ?></h3>
                 <h3>상세 설명: </h3>
-                <p><?php echo htmlspecialchars($category['PRO_DESC'] ?? '설명이 없습니다.'); ?></p>
+                <p><?php echo $category['PRO_DESC'] ?? '설명이 없습니다.'; ?></p>
                 <form method="POST">
-                    <div class="input-section">
+                    <input type="hidden" name="pro_id" value="<?php echo $category_id; ?>">
+                    <input type="hidden" name="purchase_num" value="<?php echo $purchase_num; ?>">
+                    <input type="hidden" name="user_points" value="<?php echo $user['MEM_POINT']; ?>">                    
+                 <div class="input-section">
                         <label for="purchase_num">구매 개수:</label>
                         <input type="number" id="purchase_num" name="purchase_num" value="1" min="1">
-                        <button type="button" onclick="openPopup(<?php echo htmlspecialchars($category['PRO_ID']); ?>)">구매하기</button>
+                        <button type="button" onclick="openPopup(<?php echo $category['PRO_ID']; ?>)">구매하기</button>
                         <script>
                         function openPopup(category_id) {
                             var purchase_num = document.getElementById('purchase_num').value;
