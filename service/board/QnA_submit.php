@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'db.php';  // 데이터베이스 연결
+require '../../db.php';  // 데이터베이스 연결
 
 try {
     // 로그인된 사용자 MEM_ID

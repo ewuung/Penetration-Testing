@@ -3,7 +3,7 @@ session_start();
 
 // 로그인 상태 확인
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php?redirect_to=" . urlencode($_SERVER['REQUEST_URI']));
+    header("Location: ../../login.php?redirect_to=" . urlencode($_SERVER['REQUEST_URI']));
     exit;
 }
 
@@ -100,7 +100,7 @@ $logged_in_user = $_SESSION['user_id']; // 로그인된 사용자 MEM_ID
 <body>
     <header>
         <h1>
-            <span class="title_main" onclick="location.href='main.php'" style="cursor: pointer;">현대오토에버</span> 
+            <span class="title_main" onclick="location.href='../../main.php'" style="cursor: pointer;">현대오토에버</span> 
             <span class="title_sub">Q&A 작성</span>
         </h1>
     </header>

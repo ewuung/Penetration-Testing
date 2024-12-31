@@ -89,7 +89,7 @@ try {
             </div>
         <?php endif; ?>
 
-        <a href="admin_board.php" class="back-button">← 뒤로가기</a>
+        <a href="board.php" class="back-button">← 뒤로가기</a>
     </div>
 </body>
 </html>

@@ -3,7 +3,7 @@ session_start();
 
 // 로그인 상태 확인
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php?redirect_to=" . urlencode($_SERVER['REQUEST_URI']));
+    header("Location: ../../login.php?redirect_to=" . urlencode($_SERVER['REQUEST_URI']));
     exit;
 }
 ?>
@@ -45,7 +45,6 @@ if (!isset($_SESSION['user_id'])) {
             font-size: 36px;
             font-family: 'Arial', sans-serif;
         }
-        
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -121,7 +120,7 @@ if (!isset($_SESSION['user_id'])) {
 <body>
     <header>
         <h1>
-            <span class="title_main" onclick="location.href='main.php'">현대오토에버</span> 
+            <span class="title_main" onclick="location.href='../../main.php'">현대오토에버</span> 
             <span class="title_sub">Q&A 게시판</span>
         </h1>
     </header>
@@ -145,7 +144,7 @@ if (!isset($_SESSION['user_id'])) {
     </thead>
     <tbody>
         <?php
-        require 'db.php';
+        require '../../db.php';
 
         // 페이지네이션 설정
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -170,7 +169,6 @@ if (!isset($_SESSION['user_id'])) {
             WHERE board.title LIKE '%$search%'
         ";
 
-
         try {
             // 전체 게시글 수 계산
             $totalStmt = $pdo->query($totalSql);
@@ -183,20 +181,20 @@ if (!isset($_SESSION['user_id'])) {
 
             foreach ($posts as $post): ?>
                 <tr>
-                    <td><?= htmlspecialchars($post['id']) ?></td>
+                    <td><?= $post['id'] ?></td> <!-- XSS 취약점: htmlspecialchars 제거 -->
                     <td>
                         <?php if ($post['is_private']): ?>
-                            <a href="QnA_detail.php?id=<?= htmlspecialchars($post['id']) ?>">
-                                <span>🔒</span> <?= htmlspecialchars($post['title']) ?>
+                            <a href="QnA_detail.php?id=<?= $post['id'] ?>">
+                                <span>🔒</span> <?= $post['title'] ?>
                             </a>
                         <?php else: ?>
-                            <a href="QnA_detail.php?id=<?= htmlspecialchars($post['id']) ?>">
-                                <?= htmlspecialchars($post['title']) ?>
+                            <a href="QnA_detail.php?id=<?= $post['id'] ?>">
+                                <?= $post['title'] ?> <!-- XSS 취약점: htmlspecialchars 제거 -->
                             </a>
                         <?php endif; ?>
                     </td>
-                    <td><?= htmlspecialchars($post['MEM_ID']) ?></td>
-                    <td><?= htmlspecialchars($post['created_at']) ?></td>
+                    <td><?= $post['MEM_ID'] ?></td> <!-- XSS 취약점: htmlspecialchars 제거 -->
+                    <td><?= $post['created_at'] ?></td>
                 </tr>
             <?php endforeach;
         } catch (PDOException $e) {

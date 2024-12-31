@@ -151,7 +151,7 @@ if (isset($_SESSION['user_id'])) {
         <div class="grid">
             <div class="card">
                 <h2>고객센터</h2>
-                <a href="support.php">자세히 보기</a>
+                <a href="./service/support.php">자세히 보기</a>
             </div>
             <div class="card">
                 <h2>고객담당자 등록</h2>
