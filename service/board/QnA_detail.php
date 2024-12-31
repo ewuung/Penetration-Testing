@@ -52,8 +52,8 @@ try {
 
     // 댓글 삽입 처리
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comment'])) {
-        $comment = htmlspecialchars($_POST['comment']);
-        $mem_id = $_SESSION['user_id']; // 현재 로그인한 사용자 ID
+        $comment = $_POST['comment'];
+        $mem_id = $_SESSION['user_id'];
         $commentStmt = $pdo->prepare("
             INSERT INTO comments (post_id, MEM_ID, content, created_at)
             VALUES (?, ?, ?, NOW())
@@ -62,6 +62,7 @@ try {
         header("Location: QnA_detail.php?id=$id");
         exit;
     }
+
 
 } catch (PDOException $e) {
     die("오류 발생: " . $e->getMessage());
@@ -155,35 +156,35 @@ try {
 <body>
     <div class="container">
         <a href="QnA_board.php" class="back-button">← 뒤로가기</a>
-        <h2><?= htmlspecialchars($post['title']) ?></h2>
-        <p><strong>작성자:</strong> <?= htmlspecialchars($post['MEM_ID']) ?></p>
-        <p><strong>작성일:</strong> <?= htmlspecialchars($post['created_at']) ?></p>
+        <h2><?= $post['title'] ?></h2>
+        <p><strong>작성자:</strong> <?= $post['MEM_ID'] ?></p>
+        <p><strong>작성일:</strong> <?= $post['created_at'] ?></p>
         <div class="content">
-            <?= nl2br(htmlspecialchars($post['content'])) ?>
+            <p><?= nl2br($post['content']) ?></p>
         </div>
         <?php if ($post['file_path']): ?>
-            <p><strong>첨부 파일:</strong> <a href="<?= htmlspecialchars($post['file_path']) ?>" download>다운로드</a></p>
+            <p><strong>첨부 파일:</strong> <a href="<?= $post['file_path'] ?>" download>다운로드</a></p>
         <?php endif; ?>
 
         <!-- 글 수정 삭제 버튼 -->
         <div style="margin-top: 20px;">
-            <a href="QnA_edit.php?id=<?= htmlspecialchars($id) ?>" style="padding: 10px 20px; background-color: #003399; color: white; text-decoration: none; border-radius: 4px;">글 수정</a>
-            <a href="QnA_delete.php?id=<?= htmlspecialchars($id) ?>" style="padding: 10px 20px; background-color: #d9534f; color: white; text-decoration: none; border-radius: 4px;" onclick="return confirm('정말로 삭제하시겠습니까?');">글 삭제</a>
+            <a href="QnA_edit.php?id=<?= $id ?>" style="padding: 10px 20px; background-color: #003399; color: white; text-decoration: none; border-radius: 4px;">글 수정</a>
+            <a href="QnA_delete.php?id=<?= $id ?>" style="padding: 10px 20px; background-color: #d9534f; color: white; text-decoration: none; border-radius: 4px;" onclick="return confirm('정말로 삭제하시겠습니까?');">글 삭제</a>
         </div>
 
         <div class="comments-section">
             <h3>댓글</h3>
             <?php foreach ($comments as $comment): ?>
                 <div class="comment">
-                    <p><?= nl2br(htmlspecialchars($comment['content'])) ?></p>
+                    <p><?= nl2br($comment['content']) ?></p>
                     <p style="text-align: right; font-size: 12px; color: #888;">
-                        작성자: <?= htmlspecialchars($comment['MEM_ID']) ?><br>
-                        <?= $comment['updated_at'] ? "수정일: " . htmlspecialchars($comment['updated_at']) : "작성일: " . htmlspecialchars($comment['created_at']) ?>
+                        작성자: <?= $comment['MEM_ID'] ?><br>
+                        <?= $comment['updated_at'] ? "수정일: " . $comment['updated_at'] : "작성일: " . $comment['created_at'] ?>
                     </p>
                     <!-- 댓글 수정 및 삭제 버튼 -->
                     <div style="text-align: right; margin-top: 10px;">
-                        <a href="QnA_edit_comment.php?id=<?= htmlspecialchars($comment['id']) ?>" class="edit-button">✏️ 수정</a>
-                        <a href="QnA_delete_comment.php?id=<?= htmlspecialchars($comment['id']) ?>" class="edit-button" style="color: #d9534f;" onclick="return confirm('정말로 삭제하시겠습니까?');">🗑 삭제</a>
+                        <a href="QnA_edit_comment.php?id=<?= $comment['id'] ?>" class="edit-button">✏️ 수정</a>
+                        <a href="QnA_delete_comment.php?id=<?= $comment['id'] ?>" class="edit-button" style="color: #d9534f;" onclick="return confirm('정말로 삭제하시겠습니까?');">🗑 삭제</a>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -195,5 +196,6 @@ try {
         </div>
     </div>
 </body>
+
 </html>
 
