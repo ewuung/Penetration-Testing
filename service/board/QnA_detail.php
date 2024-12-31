@@ -1,5 +1,5 @@
 <?php
-require 'db.php';
+require '../../db.php';
 session_start();
 
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {

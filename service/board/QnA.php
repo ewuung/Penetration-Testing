@@ -109,7 +109,7 @@
 <body>
     <header>
         <h1>
-            <span class="title_main" onclick="location.href='main.php'">현대오토에버</span> 
+            <span class="title_main" onclick="location.href='../../main.php'">현대오토에버</span> 
             <span class="title_sub">FAQ 및 Q&A</span>
         </h1>
     </header>
