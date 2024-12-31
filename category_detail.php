@@ -14,7 +14,13 @@ if (!isset($_SESSION['user_id'])) {
 $user['MEM_ID'] = $_SESSION['user_id'];
 $user['MEM_NAME'] = $_SESSION['username'];
 
-$user_point = isset($_GET['user_point']) ? $_GET['user_point'] : 0;
+// 세션에서 포인트 값 가져오기
+$user_point = isset($_SESSION['user_point']) ? $_SESSION['user_point'] : 0;
+
+// GET 파라미터로 전달된 포인트 값이 있으면 그것을 사용
+if(isset($_GET['user_point'])) {
+    $user_point = (int)$_GET['user_point'];
+}
 $category_id = isset($_GET['category_id']) ? (int)$_GET['category_id'] : 0;
 
 // Fetch category details from database
@@ -232,7 +238,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p><?php echo $category['PRO_DESC'] ?? '설명이 없습니다.'; ?></p>
                 <form method="POST" action="purchase.php"> 
                     <input type="hidden" name="category_id" value="<?php echo $category_id; ?>">
-                    <input type="hidden" name="user_point" value="<?php echo $_SESSION['user_point']; ?>">
+                    <input type="hidden" name="user_point" value="<?php echo $user_point; ?>">
                     <input type="hidden" name="pro_cost" value="<?php echo $category['PRO_COST']; ?>">              
                     <div class="input-section">
                         <label for="purchase_num">구매 개수:</label>
@@ -245,7 +251,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 alert("구매 개수를 입력하세요.");
                                 return;
                             }
-                            var user_point = document.getElementsByName('user_point')[0].value;
+                            var user_point = <?php echo $user_point; ?>;
                             var url = 'purchase.php?category_id=' + category_id + 
                                     '&purchase_num=' + purchase_num + 
                                     '&user_point=' + user_point;
