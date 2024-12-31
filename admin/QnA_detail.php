@@ -1,5 +1,5 @@
 <?php
-require 'db.php';
+require '../db.php';
 
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     die("잘못된 접근입니다.");
@@ -27,7 +27,7 @@ try {
         $deleteCommentId = (int)$_POST['delete_comment_id'];
         $deleteStmt = $pdo->prepare("DELETE FROM comments WHERE id = ?");
         $deleteStmt->execute([$deleteCommentId]);
-        header("Location: admin_QnA_detail.php?id=$id");
+        header("Location: QnA_detail.php?id=$id");
         exit();
     }
 
@@ -42,7 +42,7 @@ try {
                 WHERE id = ?
             ");
             $editStmt->execute([$newContent, $editCommentId]);
-            header("Location: admin_QnA_detail.php?id=$id");
+            header("Location: QnA_detail.php?id=$id");
             exit();
         }
     }
@@ -56,7 +56,7 @@ try {
                 VALUES (?, ?, 'superadmin', NOW())
             ");
             $addStmt->execute([$id, $content]);
-            header("Location: admin_QnA_detail.php?id=$id");
+            header("Location: QnA_detail.php?id=$id");
             exit();
         }
     }
@@ -224,7 +224,7 @@ try {
             </form>
         </div>
 
-        <a href="admin_board.php" class="back-button">← 뒤로가기</a>
+        <a href="board.php" class="back-button">← 뒤로가기</a>
     </div>
 </body>
 </html>

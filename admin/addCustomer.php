@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'db.php';
+require_once '../db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Sanitize and validate input data
@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($user) {
         echo "<script>
                 alert('이미 존재하는 사용자 ID입니다.');
-                window.location.href = 'admin_board.php';
+                window.location.href = 'board.php';
               </script>";
         exit();
     }
@@ -43,19 +43,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($stmt->execute()) {
         echo "<script>
                 alert('고객사가 성공적으로 추가되었습니다.');
-                window.location.href = 'admin_board.php';
+                window.location.href = 'board.php';
               </script>";
     } else {
         echo "<script>
                 alert('오류가 발생했습니다.');
-                window.location.href = 'admin_board.php';
+                window.location.href = 'board.php';
               </script>";
     }
 
     $stmt->closeCursor(); // Close the statement
 } else {
     // Redirect if accessed directly without POST
-    header("Location: admin_board.php");
+    header("Location: board.php");
     exit();
 }
 ?>

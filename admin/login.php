@@ -2,7 +2,7 @@
 session_start();  // 세션 시작
 
 // DB 연결 코드 포함
-include('db.php'); // db.php에서 DB 연결 코드 포함
+include('../db.php'); // db.php에서 DB 연결 코드 포함
 
 // 로그인 처리
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -23,8 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($password === $result['ADMIN_PW']) {
             // 로그인 성공 시 세션에 사용자 정보 저장
             $_SESSION['userID'] = $result['ADMIN_ID'];
-            // 로그인 성공 후 admin_board.php로 리디렉션
-            header("Location: admin_board.php");  // admin_board.php로 이동
+            // 로그인 성공 후 board.php로 리디렉션
+            header("Location: board.php");  // board.php로 이동
             exit();
         } else {
             // 비밀번호가 틀린 경우

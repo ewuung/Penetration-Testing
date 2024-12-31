@@ -45,6 +45,7 @@ if (!isset($_SESSION['user_id'])) {
             font-size: 36px;
             font-family: 'Arial', sans-serif;
         }
+        
         .container {
             max-width: 1200px;
             margin: 0 auto;

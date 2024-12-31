@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'db.php';
+require_once '../db.php';
 
 // Delete user functionality
 if (isset($_POST['delete_id'])) {
@@ -9,7 +9,7 @@ if (isset($_POST['delete_id'])) {
     $stmt = $pdo->prepare($delete_query);
     $stmt->bindValue(':id', $delete_id, PDO::PARAM_INT);
     $stmt->execute();
-    header("Location: admin_board.php");
+    header("Location: board.php");
     exit();
 }
 
@@ -36,7 +36,7 @@ if (isset($_POST['update'])) {
     $stmt->bindValue(':mem_email', $mem_email, PDO::PARAM_STR);
     $stmt->bindValue(':id', $id, PDO::PARAM_INT);
     $stmt->execute();
-    header("Location: admin_board.php");
+    header("Location: board.php");
     exit();
 }
 // 공지사항 삭제 기능
@@ -46,7 +46,7 @@ if (isset($_POST['delete_notice_id'])) {
     $stmt = $pdo->prepare($delete_query);
     $stmt->bindValue(':id', $delete_id, PDO::PARAM_INT);
     $stmt->execute();
-    header("Location: admin_board.php");
+    header("Location: board.php");
     exit();
 }
 
@@ -57,7 +57,7 @@ if (isset($_POST['delete_qa_id'])) {
     $stmt = $pdo->prepare($delete_query);
     $stmt->bindValue(':id', $delete_id, PDO::PARAM_INT);
     $stmt->execute();
-    header("Location: admin_board.php");
+    header("Location: board.php");
     exit();
 }
 
@@ -79,7 +79,7 @@ if (isset($_POST['update_qa'])) {
     $stmt->bindValue(':is_private', $is_private, PDO::PARAM_INT);
     $stmt->bindValue(':id', $id, PDO::PARAM_INT);
     $stmt->execute();
-    header("Location: admin_board.php");
+    header("Location: board.php");
     exit();
 }
 
@@ -99,7 +99,7 @@ if (isset($_POST['add_qa'])) {
     $stmt->bindValue(':content', $content, PDO::PARAM_STR);
     $stmt->bindValue(':is_private', $is_private, PDO::PARAM_INT);
     $stmt->execute();
-    header("Location: admin_board.php");
+    header("Location: board.php");
     exit();
 }
 
@@ -372,7 +372,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['corporate_card_file'
             <div id="add-customer" style="display: none;">
                 <h2 class="page-title">고객사 추가</h2>
                 <div class="form-container">
-                    <form class="add-form" method="POST" action="admin_addCustomer.php">
+                    <form class="add-form" method="POST" action="addCustomer.php">
                         <table class="form-table">
                             <thead>
                                 <tr>
@@ -442,7 +442,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['corporate_card_file'
                             while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                                 echo "<tr>";
                                 echo "<td>" . $row['id'] . "</td>";
-                                echo "<td><a href='admin_QnA_detail.php?id=" . $row['id'] . "'>" . htmlspecialchars($row['title']) . "</a></td>";
+                                echo "<td><a href='QnA_detail.php?id=" . $row['id'] . "'>" . htmlspecialchars($row['title']) . "</a></td>";
                                 echo "<td>" . htmlspecialchars($row['MEM_ID']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['created_at']) . "</td>";
                                 echo "<td>
@@ -503,7 +503,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['corporate_card_file'
                             while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                                 echo "<tr>";
                                 echo "<td>" . $row['id'] . "</td>";
-                                echo "<td><a href='admin_notice_detail.php?id=" . $row['id'] . "'>" . htmlspecialchars($row['title']) . "</a></td>";
+                                echo "<td><a href='notice_detail.php?id=" . $row['id'] . "'>" . htmlspecialchars($row['title']) . "</a></td>";
                                 echo "<td>" . $row['created_at'] . "</td>";
                                 echo "<td>
                                         <button class='btn btn-edit' onclick='editNotice({$row['id']})'>수정</button>
@@ -587,19 +587,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['corporate_card_file'
         }
 
         function addQnA() {
-            window.location.href = 'admin_addQnA.php';
+            window.location.href = 'addQnA.php';
         }
 
         function editQnA(id) {
-            window.location.href = `admin_editQnA.php?id=${id}`;
+            window.location.href = `editQnA.php?id=${id}`;
         }
 
         function editNotice(id) {
-            window.location.href = `admin_editNotice.php?id=${id}`;
+            window.location.href = `editNotice.php?id=${id}`;
         }
 
         function addNotice() {
-            window.location.href = 'admin_addNotice.php';
+            window.location.href = 'addNotice.php';
         }
     </script>
 </body>
