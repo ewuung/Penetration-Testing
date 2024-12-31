@@ -240,7 +240,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p><?php echo $category['PRO_DESC'] ?? '설명이 없습니다.'; ?></p>
                 <form method="POST" action="purchase.php"> 
                     <input type="hidden" name="category_id" value="<?php echo $category_id; ?>">
-                    <input type="hidden" name="user_point" value="<?php echo $user['MEM_POINT']; ?>">
+                    <input type="hidden" name="user_point" value="<?php echo $_SESSION['user_points']; ?>">
                     <input type="hidden" name="pro_cost" value="<?php echo $category['PRO_COST']; ?>">              
                     <div class="input-section">
                         <label for="purchase_num">구매 개수:</label>

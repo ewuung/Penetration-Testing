@@ -5,7 +5,8 @@ require 'db.php'; // 데이터베이스 연결 파일 포함
 // 세션에서 사용자 정보 가져오기
 $user['MEM_ID'] = $_SESSION['user_id'];
 $user['MEM_NAME'] = $_SESSION['username'];
-$user['MEM_POINT'] = $_SESSION['user_points'];
+// 클라이언트에서 전달받은 포인트 값을 사용 (세션 값으로 대체)
+$user['MEM_POINT'] = isset($_POST['user_point']) ? (int)$_POST['user_point'] : $_SESSION['user_points'];
 
 $category_id = isset($_GET['category_id']) ? (int)$_GET['category_id'] : 0;
 $purchase_num = isset($_POST['purchase_num']) ? (int)$_POST['purchase_num'] : 1;
@@ -36,29 +37,25 @@ try {
 
     // 결제 처리
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if ($user_point >= $total_price) {
-            $remaining_points = $user_point - $total_price;
-
-            // 사용자 포인트 업데이트
-            $update_query = "UPDATE MEMBERS SET MEM_POINT = $remaining_points WHERE MEM_ID = {$user['MEM_ID']}";
-            $pdo->exec($update_query);            
-
-            // 세션 값 갱신
+        if ($user['MEM_POINT'] >= $total_price) {
+            $remaining_points = $user['MEM_POINT'] - $total_price;
             $_SESSION['user_points'] = $remaining_points;
-
-            // 구매 기록 저장 
+        
+            // 구매 기록 DB에 저장
             $purchase_date = date('Y-m-d H:i:s');
             $purchase_query = "INSERT INTO PURCHASE (PU_ID, PU_NUM, PU_DATE) VALUES ({$user['MEM_ID']}, $purchase_num, '$purchase_date')";
-            $pdo->exec($purchase_query);            
-
+            $pdo->exec($purchase_query);
+        
             $message = "결제가 완료되었습니다. 잔여 포인트: " . number_format($remaining_points) . "원";
         } else {
             $message = "포인트가 부족합니다.";
         }
-
-        echo "<script>alert('" . $message, ENT_QUOTES . "'); window.location.href='" . $_SERVER['PHP_SELF'] . "?category_id=$category_id&purchase_num=$purchase_num';</script>";
+        
+    
+        echo "<script>alert('" . $message . "'); window.location.href='" . $_SERVER['PHP_SELF'] . "?category_id=$category_id&purchase_num=$purchase_num';</script>";
         exit;
     }
+    
 
     // 결제 후 예상 포인트 계산
     $expected_points = $user_point - $total_price;
