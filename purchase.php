@@ -8,9 +8,8 @@ $user['MEM_NAME'] = $_SESSION['username'];
 $user['MEM_POINT'] = $_SESSION['user_points'];
 
 // POST로 전달된 데이터 처리
-$pro_id = isset($_POST['pro_id']) ? (int)$_POST['pro_id'] : 0;
+$category_id = isset($_POST['category_id']) ? (int)$_POST['category_id'] : 0;
 $purchase_num = isset($_POST['purchase_num']) ? (int)$_POST['purchase_num'] : 1;
-$category_id = isset($_POST['pro_id']) ? (int)$_POST['pro_id'] : 0;
 
 // 유효한 카테고리인지 확인
 if (!$category_id) {
@@ -138,7 +137,7 @@ try {
     <p><strong>결제 후 예상 포인트:</strong> <?php echo number_format($expected_points); ?> 원</p>
 
     <form method="POST">
-        <input type="hidden" name="pro_id" value="<?php echo $category_id; ?>">
+        <input type="hidden" name="category_id" value="<?php echo $category_id; ?>">
         <input type="hidden" name="purchase_num" value="<?php echo $purchase_num; ?>">
         <input type="hidden" name="user_point" value="<?php echo $user_point; ?>">
 
