@@ -12,14 +12,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $user = $result->fetch(PDO::FETCH_ASSOC);
 
     if ($user) {
-        $_SESSION['user_id'] = $user['MEM_ID'];
-        $_SESSION['username'] = $user['MEM_NAME'];
-        header("Location: home.php");
-        exit;
+        if (md5($password) === $user['MEM_PW']) {
+            $_SESSION['user_id'] = $user['MEM_ID'];
+            $_SESSION['username'] = $user['MEM_NAME'];
+            header("Location: home.php");
+            exit;
+        } else {
+            $error = "아이디 또는 비밀번호가 잘못 되었습니다.";
+        }
     } else {
         $error = "아이디 또는 비밀번호가 잘못 되었습니다.";
     }
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -139,8 +144,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <button type="submit">로그인</button>
         </form>
     </div>
-    <footer>
-        <p>COPYRIGHT 2019 HYUNDAI AUTOEVER CORP. ALL RIGHTS RESERVED.</p>
-    </footer>
+     
 </body>
 </html>
