@@ -49,11 +49,13 @@ try {
 
         // DB 업데이트
         $remaining_points = $_SESSION['user_point'];
-        $update_query = "UPDATE USERS SET MEM_POINT = $remaining_points WHERE MEM_ID = {$user['MEM_ID']}";
+        // UPDATE 쿼리 실행
+        $update_query = "UPDATE MEMBERS SET MEM_POINT = $remaining_points WHERE MEM_ID = '" . $user['MEM_ID'] . "'";
         $pdo->exec($update_query);
 
+        // INSERT 쿼리 실행
         $purchase_date = date('Y-m-d H:i:s');
-        $purchase_query = "INSERT INTO PURCHASE (PU_ID, PU_NUM, PU_DATE) VALUES ({$user['MEM_ID']}, $purchase_num, '$purchase_date')";
+        $purchase_query = "INSERT INTO PURCHASE (PU_ID, PU_NUM, PU_DATE) VALUES ('" . $user['MEM_ID'] . "', $purchase_num, '$purchase_date')";
         $pdo->exec($purchase_query);
 
         $message = "결제가 완료되었습니다. 최종 결제 금액: $final_price 원. 잔여 포인트: " . number_format($remaining_points) . "원";

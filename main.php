@@ -162,7 +162,7 @@ if (isset($_SESSION['user_id'])) {
             color: #002266;
         }
 
-        /* 서브메뉴 숨김 처리 */
+        /* 서브메뉴 기본 숨김 */
         .submenu {
             display: none;
             position: absolute;
@@ -173,7 +173,7 @@ if (isset($_SESSION['user_id'])) {
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             z-index: 1000;
-            width: 200px;
+            min-width: 200px;
         }
 
         .submenu li {
@@ -193,11 +193,10 @@ if (isset($_SESSION['user_id'])) {
             color: #002266;
         }
 
-        /* 커서를 올렸을 때 서브메뉴 표시 */
+        /* 부모 항목에 커서 올렸을 때 서브메뉴 표시 */
         .global-nav li:hover .submenu {
             display: block;
         }
-
     </style>
 </head>
 <body>
