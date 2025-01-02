@@ -6,8 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = $_POST['id'];
     $password = $_POST['password'];
 
-    // 취약한 SQL 쿼리
-    $query = "SELECT * FROM MEMBERS WHERE MEM_ID = '$id'";
+    $query = "SELECT MEM_ID, MEM_NAME, MEM_PW FROM MEMBERS WHERE MEM_ID = '$id'";
     $result = $pdo->query($query);
     $user = $result->fetch(PDO::FETCH_ASSOC);
 
@@ -18,13 +17,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: home.php");
             exit;
         } else {
-            $error = "아이디 또는 비밀번호가 잘못 되었습니다.";
+            
+            $error = "비밀번호가 잘못 되었습니다.";
         }
     } else {
-        $error = "아이디 또는 비밀번호가 잘못 되었습니다.";
+        $error = "아이디가 잘못 되었습니다.";
     }
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="ko">

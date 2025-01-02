@@ -148,13 +148,13 @@ try {
     <div class="container">
         <div class="welcome-section">
             <h2>환영합니다, <?php echo $user['MEM_NAME']; ?>님!</h2>
-            <p>CASH : <?php echo number_format($user['MEM_POINT']); ?>원</p>
+            <p>보유 H캐시 : <?php echo number_format($user['MEM_POINT']); ?>원</p>
             <input type="hidden" id="user_point" value="<?php echo $user['MEM_POINT']; ?>">
             <a href="convert_cash.php" style="display: inline-block; margin-top: 10px; padding: 10px 20px; background-color: #003399; color: white; text-decoration: none; border-radius: 4px;">
-        H캐쉬→현금 전환
+        H캐시→현금 전환
             </a>
             <a href="convert_money.php" style="display: inline-block; margin-top: 10px; padding: 10px 20px; background-color: #003399; color: white; text-decoration: none; border-radius: 4px;">
-        현금→H캐쉬 전환
+        현금→H캐시 전환
             </a>
         </div>
         <h2>CATEGORY</h2>

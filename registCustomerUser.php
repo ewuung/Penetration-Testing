@@ -230,48 +230,48 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <label for="customer_company">고객사</label>
                 <select id="customer_company" name="customer_company" required>
                     <option value="">고객사를 선택하세요.</option>
-                    <option value="company1">현대오토에버(자산)</option>
-                    <option value="company2">현대오토에버(판매)</option>
-                    <option value="company3">현대자동차</option>
-                    <option value="company4">기아자동차</option>
-                    <option value="company5">현대건설</option>
-                    <option value="company6">HYUNDAI E&C</option>
-                    <option value="company7">현대 엔지니어링</option>
-                    <option value="company8">현대종합설계건축사무소</option>
-                    <option value="company9">현대스틸산업주식회사</option>
-                    <option value="company10">현대카드</option>
-                    <option value="company11">블루월넛</option>
-                    <option value="company12">현대캐피탈</option>
-                    <option value="company13">현대모비스</option>
-                    <option value="company14">현대하이스코</option>
-                    <option value="company15">케피코</option>
-                    <option value="company16">본텍</option>
-                    <option value="company17">기아타이거스</option>
-                    <option value="company18">현대제철주식회사</option>
-                    <option value="company19">현대종합특수강</option>
-                    <option value="company20">삼우 당진공장</option>
-                    <option value="company21">그린에어주식회사</option>
-                    <option value="company22">현대서산농장</option>
-                    <option value="company23">비앤지스틸</option>
+                    <option value="현대오토에버(자산)">현대오토에버(자산)</option>
+                    <option value="현대오토에버(판매)">현대오토에버(판매)</option>
+                    <option value="현대자동차">현대자동차</option>
+                    <option value="기아자동차">기아자동차</option>
+                    <option value="현대건설">현대건설</option>
+                    <option value="HYUNDAI E&C">HYUNDAI E&C</option>
+                    <option value="현대 엔지니어링">현대 엔지니어링</option>
+                    <option value="현대종합설계건축사무소">현대종합설계건축사무소</option>
+                    <option value="현대스틸산업주식회사">현대스틸산업주식회사</option>
+                    <option value="현대카드">현대카드</option>
+                    <option value="블루월넛">블루월넛</option>
+                    <option value="현대캐피탈">현대캐피탈</option>
+                    <option value="현대모비스">현대모비스</option>
+                    <option value="현대하이스코">현대하이스코</option>
+                    <option value="케피코">케피코</option>
+                    <option value="본텍">본텍</option>
+                    <option value="기아타이거스">기아타이거스</option>
+                    <option value="현대제철주식회사">현대제철주식회사</option>
+                    <option value="현대종합특수강">현대종합특수강</option>
+                    <option value="삼우 당진공장">삼우 당진공장</option>
+                    <option value="그린에어주식회사">그린에어주식회사</option>
+                    <option value="현대서산농장">현대서산농장</option>
+                    <option value="비앤지스틸">비앤지스틸</option>
                 </select>
             </div>
             <div class="form-group">
                 <label for="department">부서</label>
                 <select id="department" name="department" required>
                     <option value="">부서를 선택하세요.</option>
-                    <option value="Management Support">경영지원팀</option>
-                    <option value="Management Support Systems">경영지원시스템팀</option>
-                    <option value="Purchasing">구매팀</option>
-                    <option value="R&D Business">연구개발사업팀</option>
-                    <option value="R&D Systems">연구개발시스템팀</option>
-                    <option value="Sales Systems">판매시스템팀</option>
-                    <option value="Finished Vehicle IT Business">완성차IT사업팀</option>
-                    <option value="Product Development">상품개발팀</option>
-                    <option value="Construction Business">건설사업팀</option>
-                    <option value="Mobis Systems">모비스시스템팀</option>
-                    <option value="Parts Systems">부품시스템팀</option>
-                    <option value="Steel Management Systems">철강경영시스템팀</option>
-                    <option value="Steel Product Systems">철강생산시스템팀</option>
+                    <option value="경영지원팀">경영지원팀</option>
+                    <option value="경영지원시스템팀">경영지원시스템팀</option>
+                    <option value="구매팀">구매팀</option>
+                    <option value="연구개발사업팀">연구개발사업팀</option>
+                    <option value="연구개발시스템팀">연구개발시스템팀</option>
+                    <option value="판매시스템팀">판매시스템팀</option>
+                    <option value="완성차IT사업팀">완성차IT사업팀</option>
+                    <option value="상품개발팀">상품개발팀</option>
+                    <option value="건설사업팀">건설사업팀</option>
+                    <option value="모비스시스템팀">모비스시스템팀</option>
+                    <option value="부품시스템팀">부품시스템팀</option>
+                    <option value="철강경영시스템팀">철강경영시스템팀</option>
+                    <option value="철강생산시스템팀">철강생산시스템팀</option>
                 </select>
             </div>
             <div class="form-group">
@@ -320,10 +320,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // 비밀번호 조건 검사 (서버 측에서도 체크)
-    $upperCase = /[A-Z]/;
-    $lowerCase = /[a-z]/;
-    $numbers = /[0-9]/;
-    $specialChars = /[!@#$%^&*(),.?":{}|<>]/;
+    $upperCase = preg_match('/[A-Z]/', $password);
+    $lowerCase = preg_match('/[a-z]/', $password);
+    $numbers = preg_match('/[0-9]/', $password);
+    $specialChars = preg_match('/[!@#$%^&*(),.?":{}|<>]/', $password);
 
     $hasUpperCase = preg_match($upperCase, $user_passwd);
     $hasLowerCase = preg_match($lowerCase, $user_passwd);

@@ -22,9 +22,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $convert_amount = (int)$_POST['convert_amount'];
 
     if ($convert_amount < 100 || $convert_amount % 100 !== 0) {
-        $error = "H캐쉬 전환은 100 단위로만 가능합니다.";
+        $error = "H캐시 전환은 100 단위로만 가능합니다.";
     } elseif ($convert_amount > $user['MEM_POINT']) {
-        $error = "보유한 H캐쉬보다 큰 금액은 전환할 수 없습니다.";
+        $error = "보유한 H캐시보다 큰 금액은 전환할 수 없습니다.";
     } else {
         header("Location: payment.php?amount=$convert_amount");
         exit();
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>H캐쉬→현금 전환</title>
+    <title>H캐시→현금 전환</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -113,21 +113,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 <div class="container">
-    <h2>H캐쉬→현금 전환 신청</h2>
+    <h2>H캐시→현금 전환 신청</h2>
     <?php if (!empty($error)): ?>
         <p class="error"><?php echo $error; ?></p>
     <?php endif; ?>
     <form method="POST">
         <div class="form-group">
-            <label>보유 H캐쉬</label>
+            <label>보유 H캐시</label>
             <input type="text" id="current_point" value="<?php echo $user['MEM_POINT']; ?>" readonly>
         </div>
         <div class="form-group">
-            <label>전환할 H캐쉬</label>
+            <label>전환할 H캐시</label>
             <input type="number" id="convert_amount" name="convert_amount" oninput="updateRemainingPoint()" required>
         </div>
         <div class="form-group">
-            <label>전환 후 보유 H캐쉬</label>
+            <label>전환 후 보유 H캐시</label>
             <input type="text" id="remaining_point" value="<?php echo $user['MEM_POINT']; ?>" readonly>
         </div>
         <div class="form-group">
@@ -136,8 +136,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
     <p style="color: gray; font-size: 14px;">
         <strong>유의사항</strong><br>
-        - 전환 신청은 100 H캐쉬 단위로 가능합니다.<br>
-        - 100 H캐쉬 미만 전환은 VaatzIT 고객센터를 통해 신청할 수 있습니다.
+        - 전환 신청은 100 H캐시 단위로 가능합니다.<br>
+        - 100 H캐시 미만 전환은 VaatzIT 고객센터를 통해 신청할 수 있습니다.
     </p>
     <a href="VaatzIT_Mall.php" class="back-button">VaatzIT Mall로 돌아가기</a>
 </div>
