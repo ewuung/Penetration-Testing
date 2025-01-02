@@ -48,7 +48,8 @@ try {
         }
 
         // DB 업데이트
-        // UPDATE 쿼리 실행행
+        $remaining_points = $_SESSION['user_point'];
+        // UPDATE 쿼리 실행
         $update_query = "UPDATE MEMBERS SET MEM_POINT = $remaining_points WHERE MEM_ID = '" . $user['MEM_ID'] . "'";
         $pdo->exec($update_query);
 
