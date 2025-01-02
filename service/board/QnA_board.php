@@ -131,8 +131,15 @@ if (!isset($_SESSION['user_id'])) {
                 <input type="text" name="search" placeholder="검색어를 입력하세요" style="padding: 5px; margin-right: 10px; border: 1px solid #ddd; border-radius: 4px;">
                 <button type="submit" style="padding: 5px 10px; background-color: #003399; color: white; border: none; border-radius: 4px;">검색</button>
             </form>
+            <div style="display: none;">
+                (현재 검색어: <?= $_GET['search'] ?>) <!-- XSS 취약 -->
+            </div>
             <button onclick="location.href='QnA_form.php'">글 작성</button>
         </div>
+        <script>
+            let searchQuery = <?= json_encode($_GET['search'] ?? '', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+            console.log(searchQuery);
+        </script>
         <table class="board-table">
     <thead>
         <tr>
