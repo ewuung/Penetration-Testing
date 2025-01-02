@@ -127,6 +127,77 @@ if (isset($_SESSION['user_id'])) {
             bottom: 0;
             width: 100%;
         }
+        /* 글로벌 내비게이션 스타일 */
+        .global-nav {
+            background-color: white;
+            border-bottom: 4px solid #003399;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .global-nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+
+        .global-nav li {
+            position: relative;
+            margin: 0 20px;
+        }
+
+        .global-nav a {
+            text-decoration: none;
+            color: #003399;
+            font-weight: bold;
+            padding: 15px 20px;
+            display: block;
+            transition: color 0.3s ease;
+        }
+
+        .global-nav a:hover {
+            color: #002266;
+        }
+
+        /* 서브메뉴 숨김 처리 */
+        .submenu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            width: 200px;
+        }
+
+        .submenu li {
+            margin: 0;
+        }
+
+        .submenu a {
+            padding: 10px 20px;
+            color: #003399;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .submenu a:hover {
+            background-color: #f1f1f1;
+            color: #002266;
+        }
+
+        /* 커서를 올렸을 때 서브메뉴 표시 */
+        .global-nav li:hover .submenu {
+            display: block;
+        }
+
     </style>
 </head>
 <body>
@@ -137,6 +208,39 @@ if (isset($_SESSION['user_id'])) {
         </a>
         <span class="title_sub">VaatzIT</span>
     </h1>
+    <nav class="global-nav">
+        <ul>
+            <li>
+                <a href="./service/support.php">고객센터</a>
+                <ul class="submenu">
+                    <li><a href="./service/notice/notice.php">공지사항</a></li>
+                    <li><a href="./service/board/QnA.php">FAQ 및 Q&A</a></li>
+                    <li><a href="./service/member_guide.php">회원사 가입 안내</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="registCustomerUser.php">고객담당자 등록</a>
+                <ul class="submenu">
+                    <li><a href="registCustomerUser.php">회원 가입</a></li>  
+                </ul>
+            </li>
+            <li>
+                <a href="VaatzIT_Mall.php">VaatzIT Mall</a>
+                <ul class="submenu">
+                    <li><a href="VaatzIT_Mall.php">상품 보기</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">4대 실천사항</a>
+            </li>
+            <li>
+                <a href="#">동반성장</a>
+            </li>
+            <li>
+                <a href="#">공정 거래</a>
+            </li>
+        </ul>
+    </nav>
 </header>
     <div class="container">
         <!-- 로그인 섹션 -->

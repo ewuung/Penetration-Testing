@@ -1,5 +1,16 @@
 <?php
-session_start();
+session_start(); // Start the session
+
+// Check and update `user_point` based on GET or SESSION values
+if (isset($_GET['user_point'])) {
+    $user_point = intval($_GET['user_point']); // Use the value from the URL parameter
+    $_SESSION['user_point'] = $user_point;    // Store it in the session
+} elseif (isset($_SESSION['user_point'])) {
+    $user_point = $_SESSION['user_point'];   // Use the existing session value
+} else {
+    $user_point = 0; // Default value if neither GET nor SESSION is set
+    $_SESSION['user_point'] = $user_point;   // Initialize the session value
+}
 
 // Database connection
 require 'db.php';
@@ -10,32 +21,24 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Mock session data for testing without login
+// Retrieve user information from the session
 $user['MEM_ID'] = $_SESSION['user_id'];
 $user['MEM_NAME'] = $_SESSION['username'];
 
-// 세션에서 포인트 값 가져오기
-$user_point = isset($_SESSION['user_point']) ? $_SESSION['user_point'] : 0;
-
-// GET 파라미터로 전달된 포인트 값이 있으면 그것을 사용
-if(isset($_GET['user_point'])) {
-    $user_point = (int)$_GET['user_point'];
-}
+// Retrieve category ID from GET parameters
 $category_id = isset($_GET['category_id']) ? (int)$_GET['category_id'] : 0;
 
-// Fetch category details from database
+// Fetch category details from the database
 try {
-    // 제품 정보 가져오기
     $query = "SELECT PRO_ID, PRO_NAME, PRO_COST, PRO_IMG, PRO_DESC FROM PRODUCT WHERE PRO_ID = $category_id";
     $result = $pdo->query($query);
     $category = $result->fetch(PDO::FETCH_ASSOC);
-
 } catch (PDOException $e) {
     echo "Database error: " . $e->getMessage();
     exit;
 }
 
-// If category not found
+// If no category is found, display an error
 if (!$category) {
     echo "Category not found.";
     exit;
@@ -54,16 +57,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        // Insert purchase into PURCHASE table
+        // Insert purchase into the PURCHASE table
         $query = "INSERT INTO PURCHASE (PU_ID, PU_NUM, PU_DATE) VALUES ('$user_id', $purchase_num, '$purchase_date')";
         $pdo->query($query);
-    
+
         echo "<script>alert('구매가 완료되었습니다.');</script>";
     } catch (PDOException $e) {
         echo "Database error: " . $e->getMessage();
         exit;
     }
-    
 }
 ?>
 
@@ -224,8 +226,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h1>
             <a href="VaatzIT_Mall.php" style="text-decoration: none; color: inherit;">
                 <span class="title_main">현대오토에버</span>
-              <span class="title_sub">VaatzIT Mall</span>
-            </a>  
+                <span class="title_sub">VaatzIT Mall</span>
+            </a>
         </h1>
     </header>
     <div class="container">
@@ -233,35 +235,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <img src="<?php echo $category['PRO_IMG']; ?>" alt="<?php echo $category['PRO_NAME']; ?>">
             <div>
                 <h2>제품 품명: <?php echo $category['PRO_NAME']; ?></h2>
-                <h3>제품 가격: <?php echo $category['PRO_COST']; ?></h3>
+                <h3>제품 가격: <?php echo number_format($category['PRO_COST']); ?></h3>
                 <h3>상세 설명: </h3>
                 <p><?php echo $category['PRO_DESC'] ?? '설명이 없습니다.'; ?></p>
-                <form method="POST" action="purchase.php"> 
+                <form method="POST" action="purchase.php">
                     <input type="hidden" name="category_id" value="<?php echo $category_id; ?>">
                     <input type="hidden" name="user_point" value="<?php echo $user_point; ?>">
-                    <input type="hidden" name="pro_cost" value="<?php echo $category['PRO_COST']; ?>">              
+                    <input type="hidden" name="pro_cost" value="<?php echo $category['PRO_COST']; ?>">
                     <div class="input-section">
                         <label for="purchase_num">구매 개수:</label>
                         <input type="number" id="purchase_num" name="purchase_num" value="1" min="1">
                         <button type="button" onclick="openPopup(<?php echo $category['PRO_ID']; ?>)">구매하기</button>
                         <script>
-                        function openPopup(category_id) {
-                            var purchase_num = document.getElementById('purchase_num').value;
-                            if (purchase_num <= 0) {
-                                alert("구매 개수를 입력하세요.");
-                                return;
+                            function openPopup(category_id) {
+                                var purchase_num = document.getElementById('purchase_num').value;
+                                if (purchase_num <= 0) {
+                                    alert("구매 개수를 입력하세요.");
+                                    return;
+                                }
+                                var user_point = <?php echo $user_point; ?>;
+                                var url = 'purchase.php?category_id=' + category_id + 
+                                          '&purchase_num=' + purchase_num + 
+                                          '&user_point=' + user_point;
+                                var windowName = 'purchasePopup';
+                                var windowFeatures = 'width=600,height=400,resizable=yes,scrollbars=yes';
+                                window.open(url, windowName, windowFeatures);
                             }
-                            var user_point = <?php echo $user_point; ?>;
-                            var url = 'purchase.php?category_id=' + category_id + 
-                                    '&purchase_num=' + purchase_num + 
-                                    '&user_point=' + user_point;
-                            var windowName = 'purchasePopup';
-                            var windowFeatures = 'width=600,height=400,resizable=yes,scrollbars=yes';
-                            window.open(url, windowName, windowFeatures);
-                        }
                         </script>
                     </div>
-                </form>       
+                </form>
             </div>
         </div>
     </div>

@@ -9,19 +9,28 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+// 세션에서 사용자 정보 설정
 $user['MEM_ID'] = $_SESSION['user_id'];
 $user['MEM_NAME'] = $_SESSION['username'];
 
 // Fetch user points from MEMBERS table
 try {
-    $user['MEM_ID'] = $pdo->quote($user['MEM_ID']);
-    $query = "SELECT MEM_POINT FROM MEMBERS WHERE MEM_ID = " . $user['MEM_ID'];
+    $query = "SELECT MEM_POINT FROM MEMBERS WHERE MEM_ID = '" . $user['MEM_ID'] . "'";
     $result = $pdo->query($query);
-    $user['MEM_POINT'] = $result->fetchColumn();
+
+    if ($result) {
+        $user['MEM_POINT'] = $result->fetchColumn();
+        if ($user['MEM_POINT'] !== false) {
+            $_SESSION['user_point'] = $user['MEM_POINT']; // 세션에 포인트 저장
+        } else {
+            die("Error: User point not found.");
+        }
+    } else {
+        die("Error: Query execution failed.");
+    }
 } catch (PDOException $e) {
     die("Error fetching user points: " . $e->getMessage());
 }
-
 
 // Fetch categories for display
 try {
@@ -147,21 +156,24 @@ try {
     <div class="container">
         <div class="welcome-section">
             <h2>환영합니다, <?php echo $user['MEM_NAME']; ?>님!</h2>
-            <p>POINT : <?php echo $user['MEM_POINT']; ?>점</p>
+            <p>CASH : <?php echo number_format($user['MEM_POINT']); ?>원</p>
             <input type="hidden" id="user_point" value="<?php echo $user['MEM_POINT']; ?>">
         </div>
         <h2>CATEGORY</h2>
         <div class="grid">
         <?php foreach ($categories as $category): ?>
             <div class="card">
-                    <img src="<?php echo $category['PRO_IMG']; ?>" alt="<?php echo $category['PRO_NAME']; ?>">
-                    <h3><a href="category_detail.php?category_id=<?php echo $category['PRO_ID']; ?>&user_point=<?php echo $user['MEM_POINT']; ?>">
+                <img src="<?php echo $category['PRO_IMG']; ?>" 
+                     alt="<?php echo $category['PRO_NAME']; ?>">
+                <h3>
+                    <a href="category_detail.php?category_id=<?php echo $category['PRO_ID']; ?>&user_point=<?php echo $user['MEM_POINT']; ?>">
                         <?php echo $category['PRO_NAME']; ?>
-                    </a></h3>
-                    <h4>
-                        <?php echo $category['PRO_COST']; ?>원
-                    </h4>
-                </div>
+                    </a>
+                </h3>
+                <h4>
+                    <?php echo number_format($category['PRO_COST']); ?>원
+                </h4>
+            </div>
         <?php endforeach; ?>
         </div>
     </div>
