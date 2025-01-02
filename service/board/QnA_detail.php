@@ -52,8 +52,9 @@ try {
 
     // 댓글 삽입 처리
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comment'])) {
-        $comment = $_POST['comment'];
-        $mem_id = $_SESSION['user_id'];
+        $comment = $_POST['comment']; // 필터링 없이 입력값 그대로 사용
+        $mem_id = $_SESSION['user_id'] ?? '익명';
+
         $commentStmt = $pdo->prepare("
             INSERT INTO comments (post_id, MEM_ID, content, created_at)
             VALUES (?, ?, ?, NOW())
@@ -62,12 +63,11 @@ try {
         header("Location: QnA_detail.php?id=$id");
         exit;
     }
-
-
 } catch (PDOException $e) {
     die("오류 발생: " . $e->getMessage());
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
