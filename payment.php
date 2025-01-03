@@ -150,8 +150,8 @@ try {
     </form>
     <a href="convert_cash.php" class="back-button">뒤로 가기</a>
     <p style="color: gray; font-size: 14px;">
-        전환 금액: <?php echo $convert_amount; ?> H캐쉬<br>
-        전환 후 보유 H캐쉬: <?php echo $user_point - $convert_amount; ?>
+        전환 금액: <?php echo $convert_amount; ?> H캐시<br>
+        전환 후 보유 H캐시: <?php echo $user_point - $convert_amount; ?>
     </p>
 </div>
 </body>

@@ -21,7 +21,7 @@ try {
     $user_point = $stmt->fetchColumn();
 
     if ($convert_amount > $user_point) {
-        die("보유한 H캐쉬보다 큰 금액은 전환할 수 없습니다.");
+        die("보유한 H캐시보다 큰 금액은 전환할 수 없습니다.");
     }
     
     $stmt = $pdo->prepare("UPDATE MEMBERS SET MEM_POINT = MEM_POINT - ? WHERE MEM_ID = ?");
@@ -34,6 +34,11 @@ try {
 } catch (PDOException $e) {
     die("오류 발생: " . $e->getMessage());
 }
+
+$bank_name = isset($_POST['bank_name']) ? $_POST['bank_name'] : '없음';
+$account_number = isset($_POST['account_number']) ? $_POST['account_number'] : '없음';
+?>
+
 ?>
 
 <!DOCTYPE html>
@@ -112,12 +117,24 @@ try {
     <h2>송금 완료</h2>
     <p class="success">송금이 완료되었습니다!</p>
     
-    <div class="form-group">
-        <p>송금 신청 금액: <?php echo $convert_amount; ?> H캐쉬</p>
-        <p>전환 후 남은 H캐쉬: <?php echo $remaining_points; ?> H캐쉬</p>
+    <!-- 입금 정보 섹션 -->
+    <div class="form-group" style="background-color: #f1f8ff; padding: 15px; border-radius: 6px;">
+        <h3 style="color: #003399;">입금 정보</h3>
+        <p><strong>입금 은행:</strong> <?php echo htmlspecialchars($bank_name); ?></p>
+        <p><strong>계좌 번호:</strong> <?php echo htmlspecialchars($account_number); ?></p>
+    </div>
+
+    <!-- 금액 정보 섹션 -->
+    <div class="form-group" style="background-color: #f1f8ff; padding: 15px; border-radius: 6px;">
+        <h3 style="color: #003399;">금액 정보</h3>
+        <p><strong>송금 신청 금액:</strong> <?php echo $convert_amount; ?> H캐시</p>
+        <p><strong>전환 후 남은 H캐시:</strong> <?php echo $remaining_points; ?> H캐시</p>
     </div>
     
+    <!-- 뒤로 가기 버튼 -->
     <a href="VaatzIT_Mall.php" class="back-button">VaatzIT Mall로 돌아가기</a>
 </div>
 </body>
+
+
 </html>
