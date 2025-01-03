@@ -1,6 +1,10 @@
 <?php
 session_start();
-
+// reset_auth 파라미터 확인 및 인증 초기화
+if (isset($_GET['reset_auth']) && $_GET['reset_auth'] === 'true') {
+    $_SESSION['authenticated'] = false; // 전역 인증 초기화
+    $_SESSION['authenticated_posts'] = []; // 글별 인증 상태 초기화
+}
 // 로그인 상태 확인
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../../login.php?redirect_to=" . urlencode($_SERVER['REQUEST_URI']));
@@ -226,8 +230,6 @@ if (!isset($_SESSION['user_id'])) {
             <?php endif; ?>
         </div>
     </div>
-    <footer>
-        <p>COPYRIGHT 2019 HYUNDAI AUTOEVER CORP. ALL RIGHTS RESERVED.</p>
-    </footer>
+     
 </body>
 </html>
