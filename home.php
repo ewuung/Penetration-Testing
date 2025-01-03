@@ -28,6 +28,7 @@ $user['MEM_NAME'] = $_SESSION['username']; // 로그인 시 저장된 사용자 
             background-color: white;
             color:  #003399;
             padding-left: 11%;
+            padding-right: 11%;
             text-align: left;
             border-bottom: 4px solid #003399;
             font-family: 'Arial', sans-serif;
@@ -122,6 +123,84 @@ $user['MEM_NAME'] = $_SESSION['username']; // 로그인 시 저장된 사용자 
             bottom: 0;
             width: 100%;
         }
+                /* 글로벌 내비게이션 스타일 */
+                .global-nav {
+            background-color: white;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .global-nav ul {
+            list-style-type: none;
+            justify-content: center;
+            align-items: center;
+            width: auto;
+            padding: 0;
+            margin: 0 auto;
+        }
+
+        .global-nav li {
+            position: relative; /* 서브메뉴를 절대 위치로 띄우기 위해 필요 */
+            display: inline-block;
+            margin: 0 20px;
+        }
+
+        .global-nav a {
+            text-decoration: none;
+            color: #003399;
+            font-weight: bold;
+            font-size: 18px;
+            padding: 15px 20px;
+            display: block;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .global-nav a:hover {
+            color: #f9f9f9;
+            background-color: #003399;
+        }
+
+        /* 서브메뉴 기본 숨김 */
+        .submenu {
+            display: none; /* 기본적으로 숨겨두기 */
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            min-width: 160px;
+        }
+
+        /* 부모 항목에 커서 올렸을 때 서브메뉴 표시 */
+        .global-nav li:hover .submenu {
+            display: block; /* 부모 항목에 마우스를 올리면 표시 */
+        }
+
+        /* 서브메뉴 항목 스타일 */
+        .submenu li {
+            margin: 0;
+            display: block;
+        }
+
+        .submenu a {
+            padding: 10px 20px;
+            color: #003399;
+            text-decoration: none;
+            font-size: 15px;
+            display: block;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .submenu a:hover {
+            background-color: #f1f1f1;
+            color: #002266;
+        }
     </style>
 </head>
 <body>
@@ -132,6 +211,33 @@ $user['MEM_NAME'] = $_SESSION['username']; // 로그인 시 저장된 사용자 
         </a>
         <span class="title_sub">VaatzIT</span>
     </h1>
+    <nav class="global-nav">
+        <ul>
+            <li>
+                <a href="./service/support.php">고객센터</a>
+                <ul class="submenu">
+                    <li><a href="./service/notice/notice.php">공지사항</a></li>
+                    <li><a href="./service/board/QnA.php">FAQ 및 Q&A</a></li>
+                    <li><a href="./service/member_guide.php">회원사 가입 안내</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="registCustomerUser.php">고객담당자 등록</a>
+                <ul class="submenu">
+                    <li><a href="registCustomerUser.php">회원 가입</a></li>  
+                </ul>
+            </li>
+            <li>
+                <a href="VaatzIT_Mall.php">VaatzIT Mall</a>
+                <ul class="submenu">
+                    <li><a href="VaatzIT_Mall.php">상품 보기</a></li>
+                </ul>
+            </li>
+            <li><a href="#">4대 실천사항</a></li>
+            <li><a href="#">동반성장</a></li>
+            <li><a href="#">공정 거래</a></li>
+        </ul>
+    </nav>
 </header>
     <div class="container">
         <!-- 사용자 환영 섹션 -->
