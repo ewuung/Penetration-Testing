@@ -6,25 +6,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = $_POST['id'];
     $password = $_POST['password'];
 
-    $query = "SELECT MEM_ID, MEM_NAME, MEM_PW FROM MEMBERS WHERE MEM_ID = '$id'";
+    $hashed_password = md5($password);
+
+    $query = "SELECT MEM_ID, MEM_NAME, MEM_PW FROM MEMBERS WHERE MEM_ID = '$id' AND MEM_PW = '$hashed_password'";
     $result = $pdo->query($query);
     $user = $result->fetch(PDO::FETCH_ASSOC);
 
     if ($user) {
-        if (md5($password) === $user['MEM_PW']) {
-            $_SESSION['user_id'] = $user['MEM_ID'];
-            $_SESSION['username'] = $user['MEM_NAME'];
-            header("Location: home.php");
-            exit;
-        } else {
-            
-            $error = "비밀번호가 잘못 되었습니다.";
-        }
+        $_SESSION['user_id'] = $user['MEM_ID'];
+        $_SESSION['username'] = $user['MEM_NAME'];
+        header("Location: home.php");
+        exit;
     } else {
-        $error = "아이디가 잘못 되었습니다.";
+        $error = "아이디 또는 비밀번호가 잘못되었습니다.";
     }
 }
 ?>
+
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
