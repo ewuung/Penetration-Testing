@@ -182,8 +182,10 @@ try {
         <div class="content">
             <p><?= nl2br($post['content']) ?></p>
         </div>
+
         <?php if ($post['file_path']): ?>
-            <p><strong>첨부 파일:</strong> <a href="<?= $post['file_path'] ?>" download>다운로드</a></p>
+            <?php $fileName = basename($post['file_path']); ?>
+            <p><strong>첨부 파일:</strong> <a href="<?= $post['file_path'] ?>" download="<?= $fileName ?>"><?= $fileName ?></a></p>
         <?php endif; ?>
 
         <!-- 글 수정 삭제 버튼 -->
