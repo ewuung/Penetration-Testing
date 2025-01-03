@@ -25,6 +25,7 @@ if (isset($_SESSION['user_id'])) {
             background-color: white;
             color:  #003399;
             padding-left: 11%;
+            padding-right: 11%;
             text-align: left;
             border-bottom: 4px solid #003399;
             font-family: 'Arial', sans-serif;
@@ -130,22 +131,26 @@ if (isset($_SESSION['user_id'])) {
         /* 글로벌 내비게이션 스타일 */
         .global-nav {
             background-color: white;
-            border-bottom: 4px solid #003399;
+            width: 100%;
             padding: 0;
             margin: 0;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .global-nav ul {
-            list-style: none;
+            list-style-type: none;
+            justify-content: center;
+            align-items: center;
+            width: auto;
             padding: 0;
-            margin: 0;
-            display: flex;
+            margin: 0 auto;
         }
 
         .global-nav li {
-            position: relative;
+            position: relative; /* 서브메뉴를 절대 위치로 띄우기 위해 필요 */
+            display: inline-block;
             margin: 0 20px;
         }
 
@@ -153,37 +158,46 @@ if (isset($_SESSION['user_id'])) {
             text-decoration: none;
             color: #003399;
             font-weight: bold;
+            font-size: 18px;
             padding: 15px 20px;
             display: block;
             transition: color 0.3s ease;
+            cursor: pointer;
         }
 
         .global-nav a:hover {
-            color: #002266;
+            color: #f9f9f9;
+            background-color: #003399;
         }
 
         /* 서브메뉴 기본 숨김 */
         .submenu {
-            display: none;
+            display: none; /* 기본적으로 숨겨두기 */
             position: absolute;
-            top: 100%;
-            left: 0;
             background-color: white;
             border: 1px solid #ddd;
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             z-index: 1000;
-            min-width: 200px;
+            min-width: 160px;
         }
 
+        /* 부모 항목에 커서 올렸을 때 서브메뉴 표시 */
+        .global-nav li:hover .submenu {
+            display: block; /* 부모 항목에 마우스를 올리면 표시 */
+        }
+
+        /* 서브메뉴 항목 스타일 */
         .submenu li {
             margin: 0;
+            display: block;
         }
 
         .submenu a {
             padding: 10px 20px;
             color: #003399;
             text-decoration: none;
+            font-size: 15px;
             display: block;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
@@ -191,11 +205,6 @@ if (isset($_SESSION['user_id'])) {
         .submenu a:hover {
             background-color: #f1f1f1;
             color: #002266;
-        }
-
-        /* 부모 항목에 커서 올렸을 때 서브메뉴 표시 */
-        .global-nav li:hover .submenu {
-            display: block;
         }
     </style>
 </head>
@@ -207,7 +216,7 @@ if (isset($_SESSION['user_id'])) {
         </a>
         <span class="title_sub">VaatzIT</span>
     </h1>
-    <nav class="global-nav">
+        <nav class="global-nav">
         <ul>
             <li>
                 <a href="./service/support.php">고객센터</a>
@@ -229,15 +238,9 @@ if (isset($_SESSION['user_id'])) {
                     <li><a href="VaatzIT_Mall.php">상품 보기</a></li>
                 </ul>
             </li>
-            <li>
-                <a href="#">4대 실천사항</a>
-            </li>
-            <li>
-                <a href="#">동반성장</a>
-            </li>
-            <li>
-                <a href="#">공정 거래</a>
-            </li>
+            <li><a href="#">4대 실천사항</a></li>
+            <li><a href="#">동반성장</a></li>
+            <li><a href="#">공정 거래</a></li>
         </ul>
     </nav>
 </header>
