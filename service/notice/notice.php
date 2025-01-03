@@ -99,7 +99,7 @@
     <header>
         <h1>
             <span class="title_main" onclick="location.href='../../main.php'">현대오토에버</span> 
-            <span class="title_sub">공지사항</span>
+            <span class="title_sub">공지사항 게시판</span>
         </h1>
     </header>
     <div class="container">
@@ -109,7 +109,14 @@
                 <input type="text" name="search" placeholder="검색어를 입력하세요" style="padding: 5px; margin-right: 10px; border: 1px solid #ddd; border-radius: 4px;">
                 <button type="submit" style="padding: 5px 10px; background-color: #003399; color: white; border: none; border-radius: 4px;">검색</button>
             </form>
+            <div style="display: none;">
+                (현재 검색어: <?= $_GET['search'] ?>) <!-- XSS 취약 -->
+            </div>
         </div>
+        <script>
+            let searchQuery = <?= json_encode($_GET['search'] ?? '', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+            console.log(searchQuery);
+        </script>
         <table class="board-table">
             <thead>
                 <tr>
@@ -158,9 +165,9 @@
 
                     foreach ($notices as $notice): ?>
                         <tr>
-                            <td><?= htmlspecialchars($notice['id']) ?></td>
-                            <td><a href="notice_detail.php?id=<?= htmlspecialchars($notice['id']) ?>"><?= htmlspecialchars($notice['title']) ?></a></td>
-                            <td><?= htmlspecialchars($notice['created_at']) ?></td>
+                            <td><?= $notice['id'] ?></td>
+                            <td><a href="notice_detail.php?id=<?= $notice['id'] ?>"><?= $notice['title'] ?></a></td>
+                            <td><?= $notice['created_at'] ?></td>
                         </tr>
                     <?php endforeach;
                 } catch (PDOException $e) {
@@ -185,8 +192,6 @@
             <?php endif; ?>
         </div>
     </div>
-    <footer>
-        <p>COPYRIGHT 2019 HYUNDAI AUTOEVER CORP. ALL RIGHTS RESERVED.</p>
-    </footer>
+     
 </body>
 </html>
