@@ -52,20 +52,22 @@ try {
         $remaining_points = $user_point - $total_price; // 잔여 포인트 계산    
         $final_price = $total_price - $user_point;
 
-        // 세션션 업데이트
-        $remaining_points = $_SESSION['user_point'];
+        // 세션 업데이트
+        $_SESSION['user_point'] = $remaining_points;  // 세션의 포인트 값도 업데이트
 
         // UPDATE 쿼리 실행
         $update_query = "UPDATE MEMBERS SET MEM_POINT = $remaining_points WHERE MEM_ID = '" . $user['MEM_ID'] . "'";
         $pdo->exec($update_query);
+
+        $_SESSION['user_point'] = $remaining_points;  // 세션의 포인트 값도 업데이트
 
         // INSERT 쿼리 실행
         $purchase_date = date('Y-m-d H:i:s');
         $purchase_query = "INSERT INTO PURCHASE (PU_ID, PU_NUM, PU_DATE) VALUES ('" . $user['MEM_ID'] . "', $purchase_num, '$purchase_date')";
         $pdo->exec($purchase_query);
 
-        $message = "결제가 완료되었습니다. 최종 결제 금액: $final_price 원. 잔여 포인트: " . number_format($remaining_points) . "원";
-        $redirect_url = "main.php"; 
+        $message = "결제가 완료되었습니다. 최종 결제 금액: " . number_format($final_price) . " 원. 잔여 포인트: " . number_format($remaining_points) . "원";
+        $redirect_url = "Vaatz_Mall.php"; 
         echo "<script>alert('$message'); window.location.href='$redirect_url';</script>";
         exit;        
     }
