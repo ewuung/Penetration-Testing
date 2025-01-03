@@ -2,6 +2,10 @@
 session_start();
 require 'db.php';
 
+if (isset($_POST['user_point'])) {
+    $_SESSION['user_point'] = (int)$_POST['user_point'];
+}
+
 // 세션에서 사용자 정보 가져오기
 $user['MEM_ID'] = $_SESSION['user_id'];
 $user['MEM_NAME'] = $_SESSION['username'];
@@ -137,8 +141,8 @@ try {
     <p><strong>제품명:</strong> <?php echo $product['PRO_NAME'], ENT_QUOTES; ?></p>
     <p><strong>구매 수량:</strong> <?php echo $purchase_num; ?></p>
     <p><strong>총 가격:</strong> <?php echo number_format($total_price); ?> 원</p>
-    <p><strong>현재 내 캐시:</strong> <?php echo number_format($user_point); ?> 원</p>
-    <p><strong>결제 후 예상 캐시:</strong> <?php echo number_format($expected_points); ?> 원</p>
+    <p><strong>현재 내 H 캐시:</strong> <?php echo number_format($user_point); ?> 원</p>
+    <p><strong>결제 후 예상 H 캐시:</strong> <?php echo number_format($expected_points); ?> 원</p>
 
     <form method="POST">
         <input type="hidden" name="category_id" value="<?php echo $category_id; ?>">
