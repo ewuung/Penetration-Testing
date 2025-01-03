@@ -40,36 +40,41 @@ try {
     $pro_cost = (int)$product['PRO_COST'];
     $total_price = $purchase_num * $pro_cost;
 
-    // 결제 처리
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // 총 결제 금액이 포인트보다 클 경우
         if ($user_point < $total_price) {
             echo "<script>alert('포인트가 부족합니다. 결제를 진행할 수 없습니다.'); window.history.back();</script>";
             exit;
         }
-
+    
         // 포인트가 결제 금액 이상인 경우
         $remaining_points = $user_point - $total_price; // 잔여 포인트 계산    
-        $final_price = $total_price - $user_point;
-
-        // 세션 업데이트
-        $_SESSION['user_point'] = $remaining_points;  // 세션의 포인트 값도 업데이트
-
+        $final_price = $total_price;
+    
         // UPDATE 쿼리 실행
         $update_query = "UPDATE MEMBERS SET MEM_POINT = $remaining_points WHERE MEM_ID = '" . $user['MEM_ID'] . "'";
         $pdo->exec($update_query);
-
-        $_SESSION['user_point'] = $remaining_points;  // 세션의 포인트 값도 업데이트
-
+    
+        // DB에서 남은 포인트 다시 가져오기
+        $refresh_query = "SELECT MEM_POINT FROM MEMBERS WHERE MEM_ID = '" . $user['MEM_ID'] . "'";
+        $result = $pdo->query($refresh_query)->fetch(PDO::FETCH_ASSOC);
+    
+        if ($result) {
+            $_SESSION['user_point'] = (int)$result['MEM_POINT']; // DB의 실제 값으로 세션 값 갱신
+        } else {
+            die("Error: Unable to fetch updated points from the database.");
+        }
+    
         // INSERT 쿼리 실행
         $purchase_date = date('Y-m-d H:i:s');
         $purchase_query = "INSERT INTO PURCHASE (PU_ID, PU_NUM, PU_DATE) VALUES ('" . $user['MEM_ID'] . "', $purchase_num, '$purchase_date')";
         $pdo->exec($purchase_query);
-
-        $message = "결제가 완료되었습니다. 최종 결제 금액: " . number_format($final_price) . " 원. 잔여 포인트: " . number_format($remaining_points) . "원";
-        $redirect_url = "Vaatz_Mall.php"; 
+    
+        // 결제 완료 메시지 및 리디렉션
+        $message = "결제가 완료되었습니다. 최종 결제 금액: " . number_format($final_price) . " 원. 잔여 포인트: " . number_format($_SESSION['user_point']) . "원";
+        $redirect_url = "VaatzIT_Mall.php"; 
         echo "<script>alert('$message'); window.location.href='$redirect_url';</script>";
-        exit;        
+        exit;
     }
 
     $expected_points = $user_point - $total_price;
