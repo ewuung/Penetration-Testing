@@ -161,48 +161,48 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <label for="customer_company">고객사</label>
                 <select id="customer_company" name="customer_company" required>
                 <option value="">고객사를 선택하세요.</option>
-                    <option value="company1" <?php echo ($user['COM_ID'] == 'company1') ? 'selected' : ''; ?>>현대오토에버(자산)</option>
-                    <option value="company2" <?php echo ($user['COM_ID'] == 'company2') ? 'selected' : ''; ?>>현대오토에버(판매)</option>
-                    <option value="company3" <?php echo ($user['COM_ID'] == 'company3') ? 'selected' : ''; ?>>현대자동차</option>
-                    <option value="company4" <?php echo ($user['COM_ID'] == 'company4') ? 'selected' : ''; ?>>기아자동차</option>
-                    <option value="company5" <?php echo ($user['COM_ID'] == 'company5') ? 'selected' : ''; ?>>현대건설</option>
-                    <option value="company6" <?php echo ($user['COM_ID'] == 'company6') ? 'selected' : ''; ?>>HYUNDAI E&C</option>
-                    <option value="company7" <?php echo ($user['COM_ID'] == 'company7') ? 'selected' : ''; ?>>현대 엔지니어링</option>
-                    <option value="company8" <?php echo ($user['COM_ID'] == 'company8') ? 'selected' : ''; ?>>현대종합설계건축사무소</option>
-                    <option value="company9" <?php echo ($user['COM_ID'] == 'company9') ? 'selected' : ''; ?>>현대스틸산업주식회사</option>
-                    <option value="company10" <?php echo ($user['COM_ID'] == 'company10') ? 'selected' : ''; ?>>현대카드</option>
-                    <option value="company11" <?php echo ($user['COM_ID'] == 'company11') ? 'selected' : ''; ?>>블루월넛</option>
-                    <option value="company12" <?php echo ($user['COM_ID'] == 'company12') ? 'selected' : ''; ?>>현대캐피탈</option>
-                    <option value="company13" <?php echo ($user['COM_ID'] == 'company13') ? 'selected' : ''; ?>>현대모비스</option>
-                    <option value="company14" <?php echo ($user['COM_ID'] == 'company14') ? 'selected' : ''; ?>>현대하이스코</option>
-                    <option value="company15" <?php echo ($user['COM_ID'] == 'company15') ? 'selected' : ''; ?>>케피코</option>
-                    <option value="company16" <?php echo ($user['COM_ID'] == 'company16') ? 'selected' : ''; ?>>본텍</option>
-                    <option value="company17" <?php echo ($user['COM_ID'] == 'company17') ? 'selected' : ''; ?>>기아타이거스</option>
-                    <option value="company18" <?php echo ($user['COM_ID'] == 'company18') ? 'selected' : ''; ?>>현대제철주식회사</option>
-                    <option value="company19" <?php echo ($user['COM_ID'] == 'company19') ? 'selected' : ''; ?>>현대종합특수강</option>
-                    <option value="company20" <?php echo ($user['COM_ID'] == 'company20') ? 'selected' : ''; ?>>삼우 당진공장</option>
-                    <option value="company21" <?php echo ($user['COM_ID'] == 'company21') ? 'selected' : ''; ?>>그린에어주식회사</option>
-                    <option value="company22" <?php echo ($user['COM_ID'] == 'company22') ? 'selected' : ''; ?>>현대서산농장</option>
-                    <option value="company23" <?php echo ($user['COM_ID'] == 'company23') ? 'selected' : ''; ?>>비앤지스틸</option>
+                    <option value="현대오토에버(자산)" <?php echo ($user['COM_ID'] == '현대오토에버(자산)') ? 'selected' : ''; ?>>현대오토에버(자산)</option>
+                    <option value="현대오토에버(판매)" <?php echo ($user['COM_ID'] == '현대오토에버(판매)') ? 'selected' : ''; ?>>현대오토에버(판매)</option>
+                    <option value="현대자동차" <?php echo ($user['COM_ID'] == '현대자동차') ? 'selected' : ''; ?>>현대자동차</option>
+                    <option value="기아자동차" <?php echo ($user['COM_ID'] == '기아자동차') ? 'selected' : ''; ?>>기아자동차</option>
+                    <option value="현대건설" <?php echo ($user['COM_ID'] == '현대건설') ? 'selected' : ''; ?>>현대건설</option>
+                    <option value="HYUNDAI E&C" <?php echo ($user['COM_ID'] == 'HYUNDAI E&C') ? 'selected' : ''; ?>>HYUNDAI E&C</option>
+                    <option value="현대 엔지니어링" <?php echo ($user['COM_ID'] == '현대 엔지니어링') ? 'selected' : ''; ?>>현대 엔지니어링</option>
+                    <option value="현대종합설계건축사무소" <?php echo ($user['COM_ID'] == '현대종합설계건축사무소') ? 'selected' : ''; ?>>현대종합설계건축사무소</option>
+                    <option value="현대스틸산업주식회사" <?php echo ($user['COM_ID'] == '현대스틸산업주식회사') ? 'selected' : ''; ?>>현대스틸산업주식회사</option>
+                    <option value="현대카드" <?php echo ($user['COM_ID'] == '현대카드') ? 'selected' : ''; ?>>현대카드</option>
+                    <option value="블루월넛" <?php echo ($user['COM_ID'] == '블루월넛') ? 'selected' : ''; ?>>블루월넛</option>
+                    <option value="현대캐피탈" <?php echo ($user['COM_ID'] == '현대캐피탈') ? 'selected' : ''; ?>>현대캐피탈</option>
+                    <option value="현대모비스" <?php echo ($user['COM_ID'] == '현대모비스') ? 'selected' : ''; ?>>현대모비스</option>
+                    <option value="현대하이스코" <?php echo ($user['COM_ID'] == '현대하이스코') ? 'selected' : ''; ?>>현대하이스코</option>
+                    <option value="케피코" <?php echo ($user['COM_ID'] == '케피코') ? 'selected' : ''; ?>>케피코</option>
+                    <option value="본텍" <?php echo ($user['COM_ID'] == '본텍') ? 'selected' : ''; ?>>본텍</option>
+                    <option value="기아타이거스" <?php echo ($user['COM_ID'] == '기아타이거스') ? 'selected' : ''; ?>>기아타이거스</option>
+                    <option value="현대제철주식회사" <?php echo ($user['COM_ID'] == '현대제철주식회사') ? 'selected' : ''; ?>>현대제철주식회사</option>
+                    <option value="현대종합특수강" <?php echo ($user['COM_ID'] == '현대종합특수강') ? 'selected' : ''; ?>>현대종합특수강</option>
+                    <option value="삼우 당진공장" <?php echo ($user['COM_ID'] == '삼우 당진공장') ? 'selected' : ''; ?>>삼우 당진공장</option>
+                    <option value="그린에어주식회사" <?php echo ($user['COM_ID'] == '그린에어주식회사') ? 'selected' : ''; ?>>그린에어주식회사</option>
+                    <option value="현대서산농장" <?php echo ($user['COM_ID'] == '현대서산농장') ? 'selected' : ''; ?>>현대서산농장</option>
+                    <option value="비앤지스틸" <?php echo ($user['COM_ID'] == '비앤지스틸') ? 'selected' : ''; ?>>비앤지스틸</option>
                 </select>
             </div>
             <div class="form-group">
                 <label for="department">부서</label>
                 <select id="department" name="department" required>
                 <option value="">부서를 선택하세요.</option>
-                    <option value="Management Support" <?php echo ($user['MEM_TEAM'] == 'Management Support') ? 'selected' : ''; ?>>경영지원팀</option>
-                    <option value="Management Support Systems" <?php echo ($user['MEM_TEAM'] == 'Management Support Systems') ? 'selected' : ''; ?>>경영지원시스템팀</option>
-                    <option value="Purchasing" <?php echo ($user['MEM_TEAM'] == 'Purchasing') ? 'selected' : ''; ?>>구매팀</option>
-                    <option value="R&D Business" <?php echo ($user['MEM_TEAM'] == 'R&D Business') ? 'selected' : ''; ?>>연구개발사업팀</option>
-                    <option value="R&D Systems" <?php echo ($user['MEM_TEAM'] == 'R&D Systems') ? 'selected' : ''; ?>>연구개발시스템팀</option>
-                    <option value="Sales Systems" <?php echo ($user['MEM_TEAM'] == 'Sales Systems') ? 'selected' : ''; ?>>판매시스템팀</option>
-                    <option value="Finished Vehicle IT Business" <?php echo ($user['MEM_TEAM'] == 'Finished Vehicle IT Business') ? 'selected' : ''; ?>>완성차IT사업팀</option>
-                    <option value="Product Development" <?php echo ($user['MEM_TEAM'] == 'Product Development') ? 'selected' : ''; ?>>상품개발팀</option>
-                    <option value="Construction Business" <?php echo ($user['MEM_TEAM'] == 'Construction Business') ? 'selected' : ''; ?>>건설사업팀</option>
-                    <option value="Mobis Systems" <?php echo ($user['MEM_TEAM'] == 'Mobis Systems') ? 'selected' : ''; ?>>모비스시스템팀</option>
-                    <option value="Parts Systems" <?php echo ($user['MEM_TEAM'] == 'Parts Systems') ? 'selected' : ''; ?>>부품시스템팀</option>
+                    <option value="경영지원팀" <?php echo ($user['MEM_TEAM'] == '경영지원팀') ? 'selected' : ''; ?>>경영지원팀</option>
+                    <option value="경영지원시스템팀" <?php echo ($user['MEM_TEAM'] == '경영지원시스템팀') ? 'selected' : ''; ?>>경영지원시스템팀</option>
+                    <option value="구매팀" <?php echo ($user['MEM_TEAM'] == '구매팀') ? 'selected' : ''; ?>>구매팀</option>
+                    <option value="연구개발사업팀" <?php echo ($user['MEM_TEAM'] == '연구개발사업팀') ? 'selected' : ''; ?>>연구개발사업팀</option>
+                    <option value="연구개발시스템팀" <?php echo ($user['MEM_TEAM'] == '연구개발시스템팀') ? 'selected' : ''; ?>>연구개발시스템팀</option>
+                    <option value="판매시스템팀" <?php echo ($user['MEM_TEAM'] == '판매시스템팀') ? 'selected' : ''; ?>>판매시스템팀</option>
+                    <option value="완성차IT사업팀" <?php echo ($user['MEM_TEAM'] == '완성차IT사업팀') ? 'selected' : ''; ?>>완성차IT사업팀</option>
+                    <option value="상품개발팀" <?php echo ($user['MEM_TEAM'] == '상품개발팀') ? 'selected' : ''; ?>>상품개발팀</option>
+                    <option value="건설사업팀" <?php echo ($user['MEM_TEAM'] == '건설사업팀') ? 'selected' : ''; ?>>건설사업팀</option>
+                    <option value="모비스시스템팀" <?php echo ($user['MEM_TEAM'] == '모비스시스템팀') ? 'selected' : ''; ?>>모비스시스템팀</option>
+                    <option value="부품시스템팀" <?php echo ($user['MEM_TEAM'] == '부품시스템팀') ? 'selected' : ''; ?>>부품시스템팀</option>
                     <option value="Steel Management Systems" <?php echo ($user['MEM_TEAM'] == 'Steel Management Systems') ? 'selected' : ''; ?>>철강경영시스템팀</option>
-                    <option value="Steel Product Systems" <?php echo ($user['MEM_TEAM'] == 'Steel Product Systems') ? 'selected' : ''; ?>>철강생산시스템팀</option>
+                    <option value="철강경영시스템팀" <?php echo ($user['MEM_TEAM'] == '철강경영시스템팀') ? 'selected' : ''; ?>>철강생산시스템팀</option>
                 </select>
                 <div class="form-group">
                 <label for="username">성명</label>

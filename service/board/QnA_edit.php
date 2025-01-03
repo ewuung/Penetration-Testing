@@ -18,30 +18,65 @@ try {
         die("존재하지 않는 글입니다.");
     }
 
-    // 비밀글 확인
-    if ($post['is_private'] == 1 && (!isset($_SESSION['authenticated_posts'][$id]) || $_SESSION['authenticated_posts'][$id] !== true)) {
-        die("비밀글에 접근 권한이 없습니다.");
+    // 인증 여부 확인
+    if (!isset($_SESSION['authenticated'])) {
+        $_SESSION['authenticated'] = false;
     }
 
-    // 작성자 확인
-    if ($post['MEM_ID'] !== $_SESSION['user_id']) {
-        die("<div style='max-width: 600px; margin: 50px auto; text-align: center;'>
-                <h2>권한이 없습니다.</h2>
-                <a href='QnA_board.php' style='color: #003399; text-decoration: none;'>뒤로가기</a>
-             </div>");
+    if (!$_SESSION['authenticated']) {
+        if ($post['MEM_ID'] !== $_SESSION['user_id']) {
+            die("<div style='max-width: 600px; margin: 50px auto; text-align: center;'>
+                    <h2>권한이 없습니다.</h2>
+                    <a href='QnA_board.php' style='color: #003399; text-decoration: none;'>뒤로가기</a>
+                 </div>");
+        }
+        $_SESSION['authenticated'] = true;
     }
 
     // 수정 처리
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $title = htmlspecialchars($_POST['title']);
         $content = htmlspecialchars($_POST['content']);
-        $stmt = $pdo->prepare("UPDATE board SET title = ?, content = ? WHERE id = ?");
-        $stmt->execute([$title, $content, $id]);
-        header("Location: QnA_detail.php?id=$id");
+        $is_private = isset($_POST['is_private']) ? 1 : 0;
+        $password = $is_private && !empty($_POST['password']) ? password_hash($_POST['password'], PASSWORD_DEFAULT) : $post['password'];
+
+        // 파일 처리
+        $file_path = $post['file_path'];
+        if (isset($_FILES['uploaded_file']) && $_FILES['uploaded_file']['error'] === UPLOAD_ERR_OK) {
+            $upload_dir = 'uploads/';
+            if (!is_dir($upload_dir)) {
+                mkdir($upload_dir, 0777, true);
+            }
+            $file_name = time() . '_' . basename($_FILES['uploaded_file']['name']);
+            $file_path = $upload_dir . $file_name;
+            if (!move_uploaded_file($_FILES['uploaded_file']['tmp_name'], $file_path)) {
+                throw new Exception("파일 업로드에 실패했습니다.");
+            }
+        }
+
+        // 데이터 업데이트
+        $stmt = $pdo->prepare("
+            UPDATE board
+            SET title = ?, content = ?, is_private = ?, password = ?, file_path = ?
+            WHERE id = ?
+        ");
+        $stmt->execute([$title, $content, $is_private, $password, $file_path, $id]);
+
+        $_SESSION['authenticated'] = false;
+
+        echo "<script>
+            alert('글이 성공적으로 수정되었습니다.');
+            location.href = 'QnA_detail.php?id=$id';
+        </script>";
         exit;
     }
-} catch (PDOException $e) {
-    die("오류 발생: " . $e->getMessage());
+} catch (Exception $e) {
+
+    $_SESSION['authenticated'] = false;
+    echo "<script>
+        alert('오류 발생: {$e->getMessage()}');
+        history.back();
+    </script>";
 }
 ?>
 <!DOCTYPE html>
@@ -90,21 +125,61 @@ try {
         form button:hover {
             background-color: #002266;
         }
+        .back-button {
+            margin-top: 20px;
+            background-color: #888;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .back-button:hover {
+            background-color: #666;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>글 수정</h2>
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             <label for="title">제목</label>
             <input type="text" id="title" name="title" value="<?= htmlspecialchars($post['title']) ?>" required>
 
             <label for="content">내용</label>
             <textarea id="content" name="content" rows="10" required><?= htmlspecialchars($post['content']) ?></textarea>
 
+            <label>
+                <input type="checkbox" id="is_private" name="is_private" value="1" <?= $post['is_private'] ? 'checked' : '' ?> onclick="togglePasswordField()"> 비밀글로 설정
+            </label>
+
+            <div id="password-section" style="<?= $post['is_private'] ? 'block' : 'none' ?>">
+                <label for="password">비밀번호</label>
+                <input type="password" id="password" name="password" minlength="4" placeholder="비밀번호 (최소 4자리)">
+            </div>
+
+            <label for="uploaded_file">첨부파일</label>
+            <?php if ($post['file_path']): ?>
+                <p>기존 파일: <?= htmlspecialchars($post['file_path']) ?></p>
+            <?php endif; ?>
+            <input type="file" id="uploaded_file" name="uploaded_file">
+
             <button type="submit">수정하기</button>
+            
         </form>
+        <button class="back-button" onclick="goBack()">뒤로가기</button>
+
+        <script>
+            function togglePasswordField() {
+                const isChecked = document.getElementById('is_private').checked;
+                const passwordSection = document.getElementById('password-section');
+                passwordSection.style.display = isChecked ? 'block' : 'none';
+            }
+            function goBack() {
+            // 뒤로가기 경로
+            window.location.href = 'QnA_board.php';
+            }
+        </script>
     </div>
 </body>
 </html>
-
