@@ -1,6 +1,10 @@
 <?php
 session_start();
-
+// reset_auth 파라미터 확인 및 인증 초기화
+if (isset($_GET['reset_auth']) && $_GET['reset_auth'] === 'true') {
+    $_SESSION['authenticated'] = false; // 전역 인증 초기화
+    $_SESSION['authenticated_posts'] = []; // 글별 인증 상태 초기화
+}
 // 로그인 상태 확인
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../../login.php?redirect_to=" . urlencode($_SERVER['REQUEST_URI']));
@@ -131,8 +135,15 @@ if (!isset($_SESSION['user_id'])) {
                 <input type="text" name="search" placeholder="검색어를 입력하세요" style="padding: 5px; margin-right: 10px; border: 1px solid #ddd; border-radius: 4px;">
                 <button type="submit" style="padding: 5px 10px; background-color: #003399; color: white; border: none; border-radius: 4px;">검색</button>
             </form>
+            <div style="display: none;">
+                (현재 검색어: <?= $_GET['search'] ?>) <!-- XSS 취약 -->
+            </div>
             <button onclick="location.href='QnA_form.php'">글 작성</button>
         </div>
+        <script>
+            let searchQuery = <?= json_encode($_GET['search'] ?? '', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+            console.log(searchQuery);
+        </script>
         <table class="board-table">
     <thead>
         <tr>
@@ -219,8 +230,6 @@ if (!isset($_SESSION['user_id'])) {
             <?php endif; ?>
         </div>
     </div>
-    <footer>
-        <p>COPYRIGHT 2019 HYUNDAI AUTOEVER CORP. ALL RIGHTS RESERVED.</p>
-    </footer>
+     
 </body>
 </html>
