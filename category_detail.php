@@ -235,7 +235,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <img src="<?php echo $category['PRO_IMG']; ?>" alt="<?php echo $category['PRO_NAME']; ?>">
             <div>
                 <h2>제품 품명: <?php echo $category['PRO_NAME']; ?></h2>
-                <h3>제품 가격: <?php echo number_format($category['PRO_COST']); ?></h3>
+                <h3>제품 가격: <?php echo number_format($category['PRO_COST']); ?>원</h3>
                 <h3>상세 설명: </h3>
                 <p><?php echo $category['PRO_DESC'] ?? '설명이 없습니다.'; ?></p>
                 <form method="POST" action="purchase.php">

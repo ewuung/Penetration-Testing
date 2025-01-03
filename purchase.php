@@ -38,17 +38,19 @@ try {
 
     // 결제 처리
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $final_price = $total_price - $user_point;
-
-        if ($final_price <= 0) {
-            $final_price = 0;
-            $_SESSION['user_point'] = 0;
-        } else {
-            $_SESSION['user_point'] = $user_point - $total_price;
+        // 총 결제 금액이 포인트보다 클 경우
+        if ($user_point < $total_price) {
+            echo "<script>alert('포인트가 부족합니다. 결제를 진행할 수 없습니다.'); window.history.back();</script>";
+            exit;
         }
 
-        // DB 업데이트
+        // 포인트가 결제 금액 이상인 경우
+        $remaining_points = $user_point - $total_price; // 잔여 포인트 계산    
+        $final_price = $total_price - $user_point;
+
+        // 세션션 업데이트
         $remaining_points = $_SESSION['user_point'];
+
         // UPDATE 쿼리 실행
         $update_query = "UPDATE MEMBERS SET MEM_POINT = $remaining_points WHERE MEM_ID = '" . $user['MEM_ID'] . "'";
         $pdo->exec($update_query);
@@ -59,8 +61,9 @@ try {
         $pdo->exec($purchase_query);
 
         $message = "결제가 완료되었습니다. 최종 결제 금액: $final_price 원. 잔여 포인트: " . number_format($remaining_points) . "원";
-        echo "<script>alert('$message'); window.location.href='" . $_SERVER['PHP_SELF'] . "?category_id=$category_id&purchase_num=$purchase_num';</script>";
-        exit;
+        $redirect_url = "main.php"; 
+        echo "<script>alert('$message'); window.location.href='$redirect_url';</script>";
+        exit;        
     }
 
     $expected_points = $user_point - $total_price;
