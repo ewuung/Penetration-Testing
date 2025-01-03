@@ -133,9 +133,7 @@
             <button onclick="location.href='QnA_board.php'">Q&A 게시판</button>
         </div>
     </div>
-    <footer>
-        <p>COPYRIGHT 2019 HYUNDAI AUTOEVER CORP. ALL RIGHTS RESERVED.</p>
-    </footer>
+     
 </body>
 </html>
 
