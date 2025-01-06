@@ -12,6 +12,10 @@ if (isset($_GET['user_point'])) {
     $_SESSION['user_point'] = $user_point;   // Initialize the session value
 }
 
+if (isset($_POST['user_point'])) {
+    $_SESSION['user_point'] = (int)$_POST['user_point'];
+}
+
 // Database connection
 require 'db.php';
 

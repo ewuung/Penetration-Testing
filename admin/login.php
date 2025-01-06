@@ -1,42 +1,25 @@
 <?php
-session_start();  // 세션 시작
+session_start();
+include('../db.php');
 
-// DB 연결 코드 포함
-include('../db.php'); // db.php에서 DB 연결 코드 포함
-
-// 로그인 처리
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // 사용자 입력값 받기
     $userID = $_POST['userID'];
     $password = $_POST['password'];
 
-    // SQL 쿼리 작성 (userID로 사용자 정보 가져오기)
-    $sql = "SELECT * FROM ADMIN WHERE ADMIN_ID = :userID";
-    $stmt = $pdo->prepare($sql);
-    $stmt->bindParam(':userID', $userID, PDO::PARAM_STR); // 's'는 문자열 형식
-    $stmt->execute();
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    // 사용자 정보가 존재하면
-    if ($result) {
-        // 비밀번호 검증 (admin_pw와 사용자가 입력한 비밀번호 비교)
-        if ($password === $result['ADMIN_PW']) {
-            // 로그인 성공 시 세션에 사용자 정보 저장
-            $_SESSION['userID'] = $result['ADMIN_ID'];
-            // 로그인 성공 후 board.php로 리디렉션
-            header("Location: board.php");  // board.php로 이동
-            exit();
-        } else {
-            // 비밀번호가 틀린 경우
-            $error = "잘못된 비밀번호입니다.";
-        }
-    } else {
-        // 사용자 ID가 존재하지 않는 경우
-        $error = "존재하지 않는 아이디입니다.";
-    }
+    $hashed_password = md5($password);
 
-    // 연결 종료
-    $stmt = null;
+    $sql = "SELECT ADMIN_ID, ADMIN_NAME, ADMIN_PW FROM ADMIN WHERE ADMIN_ID = '$userID' AND ADMIN_PW = '$hashed_password'";
+    $result = $pdo->query($sql);
+    $row = $result->fetch(PDO::FETCH_ASSOC);
+    
+    if ($row) {
+        $_SESSION['user_id'] = $row['ADMIN_ID'];
+        $_SESSION['username'] = $row['ADMIN_NAME'];
+        header("Location: board.php");
+        exit();
+    } else {
+        $error = "아이디 또는 비밀번호가 잘못되었습니다.";
+    }
 }
 ?>
 
