@@ -2,31 +2,40 @@
 session_start();
 require 'db.php';
 
+// 세션 확인: 로그인된 사용자만 접근 가능
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
 
-$user['MEM_ID'] = $_SESSION['user_id'];
-$user['MEM_NAME'] = $_SESSION['username'];
+$user_id = $_SESSION['user_id'];
 
 try {
+    // 사용자 보유 포인트 조회
     $stmt = $pdo->prepare("SELECT MEM_POINT FROM MEMBERS WHERE MEM_ID = ?");
-    $stmt->execute([$user['MEM_ID']]);
-    $user['MEM_POINT'] = $stmt->fetchColumn();
+    $stmt->execute([$user_id]);
+    $user_point = $stmt->fetchColumn();
+
+    if ($user_point === false) {
+        die("사용자 정보를 확인할 수 없습니다.");
+    }
 } catch (PDOException $e) {
-    die("Error fetching user points: " . $e->getMessage());
+    die("오류 발생: " . $e->getMessage());
 }
 
+// POST 요청 처리
+$error_message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $convert_amount = (int)$_POST['convert_amount'];
+    $convert_amount = $_POST['amount'] ?? 0;
 
-    if ($convert_amount < 100 || $convert_amount % 100 !== 0) {
-        $error = "H캐시 전환은 100 단위로만 가능합니다.";
-    } elseif ($convert_amount > $user['MEM_POINT']) {
-        $error = "보유한 H캐시보다 큰 금액은 전환할 수 없습니다.";
+    // 입력 금액 유효성 검증
+    if (!is_numeric($convert_amount) || $convert_amount <= 0) {
+        $error_message = "유효한 금액을 입력해주세요.";
+    } elseif ($convert_amount > $user_point) {
+        $error_message = "보유한 H캐시보다 큰 금액은 전환할 수 없습니다.";
     } else {
-        header("Location: payment.php?amount=$convert_amount");
+        // 입력 금액이 유효하면 payment.php로 이동
+        header("Location: payment.php?amount=" . (int)$convert_amount);
         exit();
     }
 }
@@ -36,8 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>H캐시→현금 전환</title>
+    <title>H캐시 전환</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -46,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding: 0;
         }
         .container {
-            max-width: 600px;
+            max-width: 500px;
             margin: 50px auto;
             background: #fff;
             padding: 20px;
@@ -87,53 +95,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: red;
             margin-bottom: 15px;
         }
-        .back-button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            background-color: #ddd;
-            color: black;
+        .info {
+            font-size: 14px;
+            color: gray;
+            margin-top: 15px;
             text-align: center;
-            text-decoration: none;
-            border-radius: 4px;
-            margin-top: 20px;
-        }
-        .back-button:hover {
-            background-color: #ccc;
         }
     </style>
-    <script>
-        function updateRemainingPoint() {
-            const currentPoint = parseInt(document.getElementById('current_point').value);
-            const convertAmount = parseInt(document.getElementById('convert_amount').value) || 0;
-            const remainingPoint = currentPoint - convertAmount;
-            document.getElementById('remaining_point').value = remainingPoint >= 0 ? remainingPoint : '0';
-        }
-    </script>
 </head>
 <body>
 <div class="container">
-    <h2>H캐시→현금 전환 신청</h2>
-    <?php if (!empty($error)): ?>
-        <p class="error"><?php echo $error; ?></p>
+    <h2>H캐시 → 현금 전환</h2>
+    <?php if ($error_message): ?>
+        <p class="error"><?php echo htmlspecialchars($error_message); ?></p>
     <?php endif; ?>
-    <form method="POST">
+    <form method="POST" action="">
         <div class="form-group">
-            <label>보유 H캐시</label>
-            <input type="text" id="current_point" value="<?php echo $user['MEM_POINT']; ?>" readonly>
+            <label for="amount">전환할 금액</label>
+            <input type="number" id="amount" name="amount" min="1" max="<?php echo $user_point; ?>" required
+                   placeholder="전환할 금액을 입력하세요.">
         </div>
         <div class="form-group">
-            <label>전환할 H캐시</label>
-            <input type="number" id="convert_amount" name="convert_amount" oninput="updateRemainingPoint()" required>
-        </div>
-        <div class="form-group">
-            <label>전환 후 보유 H캐시</label>
-            <input type="text" id="remaining_point" value="<?php echo $user['MEM_POINT']; ?>" readonly>
-        </div>
-        <div class="form-group">
-            <button type="submit">신청하기</button>
+            <button type="submit">다음</button>
         </div>
     </form>
+    <p class="info">
+        현재 보유 H캐시: <?php echo htmlspecialchars($user_point); ?> H캐시
+    </p>
     <p style="color: gray; font-size: 14px;">
         <strong>유의사항</strong><br>
         - 전환 신청은 100 H캐시 단위로 가능합니다.<br>
@@ -143,3 +131,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 </body>
 </html>
+
+
